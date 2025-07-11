@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\StatusUpdated;
 use App\Http\Services\GameService;
 use App\Http\Services\SetResultService;
 use Illuminate\Http\Request;
@@ -75,6 +76,8 @@ class SetResultController extends Controller
                 $this->gameService->update($data['id'], ['status_id' => 5]);
             }
 
+            $game = $this->gameService->findById($data['id']);
+            broadcast(new StatusUpdated($game));
             return Inertia::location(url()->previous());
         } catch (\Exception $e) {
             Log::error([

@@ -50,6 +50,7 @@ class CourtController extends Controller
     {
         $games = $this->gameService->findWithTeamByCourt($id);
         $court = $this->courtService->findById($id);
+        
         $firstGame = $this->gameService->findFirstGameByCourt($id);
 
         $courts = $this->courtService->findAll();

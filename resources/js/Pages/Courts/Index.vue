@@ -10,11 +10,9 @@ import DropdownMenu from '@/Components/DropdownMenu.vue';
 
 const page = usePage();
 
-const games = ref(page.props.games);
-const court = ref(page.props.court);
-const firstGame = ref(page.props.firstGame);
-const courts = ref(page.props.courts);
-const status = ref(page.props.status);
+const games = ref([]);
+const infos = ref({});
+
 
 /** RESULTADO */
 const editingResult = ref(false);
@@ -53,13 +51,42 @@ function formatSchedule(value) {
   return `${day}/${month} ${hours}:${minutes}`;
 }
 
-onMounted(() => {
+const findCourts = async () => {
+  const pathParts = window.location.pathname.split('/');
+  const uuid = pathParts[pathParts.length - 1];
+  try {
+    const response = await axios.get(`/api/data/court/${uuid}`);
+    games.value = response.data.data.games;
+    infos.value = {
+      court: response.data.data.court,
+      first_game: response.data.data.first_game,
+      courts: response.data.data.courts,
+      status: response.data.data.status
+    }
+    return response.data.data.games
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+onMounted(async () => {
+  await findCourts()
+
   if (flash.success || flash.error) {
     setTimeout(() => {
       flash.success = null;
       flash.error = null;
     }, 3000);
   }
+
+  window.Echo.channel('games')
+    .listen('.updated.event', async (event) => {
+      const updatedGame = await findCourts()
+      const index = games.value.findIndex(g => g.id === updatedGame.id);
+      if (index !== -1) {
+        games.value.splice(index, 1, updatedGame);
+      }
+    });
 });
 
 </script>
@@ -68,54 +95,46 @@ onMounted(() => {
 
   <Head title="Dashboard" />
   <AuthenticatedLayout>
-    <div v-if="!firstGame || !games">
-      <div class="py-12">
-        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 ">
-          <div class="flex items-center p-4">
-            <p class="text-2xl text-center font-semibold text-gray-700">Nenhum jogo encontrado nessa quadra!</p>
-            <button type="button" @click="router.visit(route('dashboard'))"
-                        class="mx-1 px-5 py-2 text-sm font-medium text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Voltar</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="py-12" v-else>
+    <div class="py-12" v-if="infos.first_game || games.length">
       <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
         <div class="space-y-4">
-          <div class="text-4xl font-semibold text-gray-700">{{ court.name }}</div>
+          <div class="text-4xl font-semibold text-gray-700">{{ infos.court.name }}</div>
           <div
             class="w-full p-4 text-center bg-white border border-gray-200 rounded-lg shadow-sm sm:p-8 dark:bg-white-800 dark:border-gray-200">
-            <p class="text-base text-gray-500 sm:text-lg dark:text-gray-500">{{ firstGame.championship.name }}</p>
-            <h5 class="mb-2 text-3xl font-bold text-gray-900 dark:text-gray-800">{{ firstGame.team_one.player_one }} /
-              {{ firstGame.team_one.player_two }} &nbsp;
-              {{ getSetPlacar(firstGame, 0).teamOne }} X {{ getSetPlacar(firstGame, 0).teamTwo }}
+            <p class="text-base text-gray-500 sm:text-lg dark:text-gray-500">{{ infos.first_game.championship.name }}
+            </p>
+            <h5 class="mb-2 text-3xl font-bold text-gray-900 dark:text-gray-800">{{ infos.first_game.team_one.player_one
+              }} /
+              {{ infos.first_game.team_one.player_two }} &nbsp;
+              {{ getSetPlacar(infos.first_game, 0).teamOne }} X {{ getSetPlacar(infos.first_game, 0).teamTwo }}
 
-              <template v-if="firstGame.set_results?.[1]">
-                | {{ getSetPlacar(firstGame, 1).teamOne }} X {{ getSetPlacar(firstGame, 1).teamTwo }}
+              <template v-if="infos.first_game.set_results?.[1]">
+                | {{ getSetPlacar(infos.first_game, 1).teamOne }} X {{ getSetPlacar(infos.first_game, 1).teamTwo }}
               </template>
 
               <!-- Tie-break (condicional e com label) -->
-              <template v-if="firstGame.set_results?.[2]">
-                | {{ getSetPlacar(firstGame, 2).teamOne }} X {{ getSetPlacar(firstGame, 2).teamTwo }}
-                <span v-if="firstGame.set_results[2].tie_break" class="text-xs text-yellow-500"> (tie-break)</span>
+              <template v-if="infos.first_game.set_results?.[2]">
+                | {{ getSetPlacar(infos.first_game, 2).teamOne }} X {{ getSetPlacar(infos.first_game, 2).teamTwo }}
+                <span v-if="infos.first_game.set_results[2].tie_break" class="text-xs text-yellow-500">
+                  (tie-break)</span>
               </template>
 
-              &nbsp; {{ firstGame.team_two.player_one }} / {{ firstGame.team_two.player_two }}
+              &nbsp; {{ infos.first_game.team_two.player_one }} / {{ infos.first_game.team_two.player_two }}
             </h5>
-            <p class="text-base text-gray-500 sm:text-lg dark:text-gray-500">Jogo: {{ firstGame.id }} - {{
-              firstGame.category }} - {{ formatSchedule(firstGame.schedule) }}</p>
+            <p class="text-base text-gray-500 sm:text-lg dark:text-gray-500">Jogo: {{ infos.first_game.id }} - {{
+              infos.first_game.category }} - {{ formatSchedule(infos.first_game.schedule) }}</p>
           </div>
 
           <div class="text-2xl font-semibold text-gray-700">Próximos jogos</div>
-          <div class="grid mb-8 border border-gray-200 rounded-lg shadow-xs md:mb-12 " :class="games.length > 1 ? 'md:grid-cols-2' : 'md:grid-cols-1'">
+          <div class="grid mb-8 border border-gray-200 rounded-lg shadow-xs md:mb-12 "
+            :class="games.length > 1 ? 'md:grid-cols-2' : 'md:grid-cols-1'">
 
             <figure v-for="game in games" :key="game.id"
               class="flex flex-col items-center justify-center text-center bg-gray-300 border-b border-gray-300 rounded-t-lg md:rounded-t-none md:rounded-ss-lg md:border-e dark:bg-gray-50 dark:border-gray-200">
               <blockquote class="mx-auto text-gray-500 dark:text-gray-400">
                 <p class="my-4 text-gray-500">JOGO: {{ game.id }} | {{ formatSchedule(game.schedule) }} | {{
                   game.category }}</p>
-                <GameStatus :status="game.status_id" />
+                <GameStatus :key="game.id" :status="game.status_id" />
 
                 <h3 class="text-2xl p-2 font-semibold text-gray-900 dark:text-gray-600">
                   <i>{{ game.team_one.player_one }}</i> / <i>{{ game.team_one.player_two }}</i>
@@ -146,14 +165,15 @@ onMounted(() => {
                     </div>
 
                     <div v-if="game.status_id === 2">
-                      <EditResultGameModal :open="editingResult" :game="game" @close="editingResult = false" />
+                      <EditResultGameModal :key="game.id" :open="editingResult" :game="game"
+                        @close="editingResult = false" />
                       <button type="button" @click="editResult(game)"
                         class="mx-1 px-5 py-2 text-sm font-medium text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 rounded-lg text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">Finalizar</button>
                     </div>
 
                     <div>
-                      <DropdownMenu :game="game" :status="status" :courts="courts" @edit="editGame"
-                        @result="resultGame" />
+                      <DropdownMenu :key="game.id" :game="game" :status="infos.status" :courts="infos.courts"
+                        @edit="editGame" @result="resultGame" />
                     </div>
                   </div>
                 </div>
@@ -170,6 +190,18 @@ onMounted(() => {
             ❌ {{ flash.error }}
           </div>
 
+        </div>
+      </div>
+    </div>
+
+    <div v-else>
+      <div class="py-12">
+        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 ">
+          <div class="flex items-center p-4">
+            <p class="text-2xl text-center font-semibold text-gray-700">Nenhum jogo encontrado nessa quadra!</p>
+            <button type="button" @click="router.visit(route('dashboard'))"
+              class="mx-1 px-5 py-2 text-sm font-medium text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Voltar</button>
+          </div>
         </div>
       </div>
     </div>

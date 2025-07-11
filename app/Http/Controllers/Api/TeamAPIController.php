@@ -41,6 +41,10 @@ class TeamAPIController extends Controller
      */
     public function findByName(string $name)
     {
+        if(!$name){
+            return response()->json(['status' => false, "message" => "Informe um nome de jogador para pesquisar!"], 400);
+        }
+
         $players = $this->teamService->findByName($name);
 
         if (count($players) == 0) {

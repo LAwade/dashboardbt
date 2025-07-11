@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\StatusUpdated;
+use App\Events\UpdatedEvent;
 use App\Http\Services\CourtService;
 use App\Http\Services\GameService;
 use Exception;
@@ -47,10 +48,10 @@ class GameController extends Controller
             }
 
             $this->gameService->update($id, $data);
-            $game = $this->gameService->findById($id);
-            //$game = $this->gameService->findAllGamesBySchedule($game->championship_id);
 
-            broadcast(new StatusUpdated($game->toArray()));
+            $game = $this->gameService->findById($id);
+
+            broadcast(new UpdatedEvent);
             return Inertia::location(url()->previous());
         } catch (\Exception $e) {
             Log::error('Erro ao atualizar jogo: ' . $e->getMessage());
@@ -97,7 +98,8 @@ class GameController extends Controller
                 throw new Exception('Não foi possível atualizar o registro!');
             }
 
-            event(new StatusUpdated($game));
+            $game = $this->gameService->findById($id);
+            broadcast(new StatusUpdated($game));
             return redirect()->back()->with('success', $message);
         } catch (\Exception $e) {
             Log::channel('exception')->error('Erro ao atualizar o status do jogo', [

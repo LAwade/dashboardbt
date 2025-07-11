@@ -4,28 +4,8 @@ import { usePage, router, Head } from '@inertiajs/vue3';
 import { onMounted, ref } from 'vue';
 import GameStatus from '@/Components/GameStatus.vue';
 
-onMounted(() => {
-    window.Echo.channel('games')
-        .listen('.status.updated', (event) => {
-            console.log('📢 Status atualizado:', event);
-
-            // Substitui o jogo correspondente na lista
-            const index = games.value.findIndex(g => g.id === event.id);
-            if (index !== -1) {
-                games.value[index] = {
-                    ...games.value[index],
-                    ...event,
-                };
-            }
-        });
-});
-
-const page = usePage();
-
-const games = ref([...usePage().props.games]);
-const waiting = page.props.waiting
-const join = page.props.join
-const finished = page.props.finished
+const games = ref([]);
+const infos = ref({});
 
 function getSetPlacar(game, index = 0) {
     const set = game.set_results?.[index];
@@ -52,6 +32,36 @@ function formatSchedule(value) {
 
     return `${day}/${month} ${hours}:${minutes}`;
 }
+
+const findGames = async () => {
+    const pathParts = window.location.pathname.split('/');
+    const uuid = pathParts[pathParts.length - 1];
+    try {
+        const response = await axios.get(`/api/data/panel/${uuid}`);
+        games.value = response.data.data.games;
+        infos.value = {
+            in_progress: response.data.data.in_progress,
+            finished: response.data.data.finished,
+            waiting: response.data.data.waiting
+        }
+        return response.data.data.games
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+onMounted(async () => {
+    await findGames()
+    window.Echo.channel('games')
+        .listen('.updated.event', async (event) => {
+            const updatedGame = await findGames()
+            const index = games.value.findIndex(g => g.id === updatedGame.id);
+            if (index !== -1) {
+                games.value.splice(index, 1, updatedGame);
+            }
+        });
+});
+
 
 </script>
 
@@ -100,7 +110,7 @@ function formatSchedule(value) {
                         </div>
                         <div class="mt-1 flex items-center gap-x-2">
                             <h3 class="text-xl font-medium text-gray-800">
-                                {{ join.length }}
+                                {{ infos.in_progress }}
                             </h3>
                         </div>
                     </div>
@@ -119,7 +129,7 @@ function formatSchedule(value) {
                         </div>
                         <div class="mt-1 flex items-center gap-x-2">
                             <h3 class="text-xl sm:text-2xl font-medium text-gray-800">
-                                {{ waiting.length }}
+                                {{ infos.waiting }}
                             </h3>
                         </div>
                     </div>
@@ -137,7 +147,7 @@ function formatSchedule(value) {
                         </div>
                         <div class="mt-1 flex items-center gap-x-2">
                             <h3 class="text-xl font-medium text-gray-800">
-                                {{ finished.length }}
+                                {{ infos.finished }}
                             </h3>
                         </div>
                     </div>
@@ -295,7 +305,7 @@ function formatSchedule(value) {
                                     <td class="size-px whitespace-nowrap">
                                         <div class="px-12 py-3">
                                             <div class="flex items-center gap-x-3">
-                                                <GameStatus :status="game.status_id" />
+                                                <GameStatus :key="game.updated_at" :status="game.status_id" />
                                             </div>
                                         </div>
                                     </td>

@@ -61,7 +61,7 @@ return [
         ],
 
         'database_errors' => [
-            'driver' => 'single',
+            'driver' => 'daily',
             'path' => function () {
                 return storage_path('logs/database_errors_' . date('Ymd') . '.log');
             },

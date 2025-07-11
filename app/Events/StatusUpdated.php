@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Http\Resources\GameResource;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
@@ -23,17 +24,7 @@ class StatusUpdated implements ShouldBroadcastNow
 
     public function broadcastWith()
     {
-        Log::info('📡 Payload limpo do evento:', [
-        'id' => $this->game->id,
-        'status_id' => $this->game->status_id,
-        'court_id' => $this->game->court_id,
-        'category' => $this->game->category,
-    ]);
-
-        return [
-            'id' => $this->game->id,
-            'status_id' => $this->game->status_id
-        ];
+        return (new GameResource($this->game))->resolve();
     }
 
     public function broadcastAs()

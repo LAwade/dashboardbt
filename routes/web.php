@@ -1,12 +1,13 @@
 <?php
 
-use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\ChampionshipController;
 use App\Http\Controllers\CourtController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\PanelController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SetResultController;
+use App\Http\Controllers\TeamController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [PanelController::class, 'index'])->name('home');
@@ -22,14 +23,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/courts', [CourtController::class, 'index'])->name('courts.index');
     Route::get('/courts/{court}', [CourtController::class, 'show'])->name('courts.show');
     
-    Route::get('/courts/create', [CourtController::class, 'create'])->name('courts.create');
-    Route::get('/courts/{court}/edit', [CourtController::class, 'edit'])->name('courts.edit');
-    Route::post('/courts', [CourtController::class, 'store'])->name('courts.store');
-    Route::put('/courts/{court}', [CourtController::class, 'update'])->name('courts.update');
-    Route::delete('/courts/{court}', [CourtController::class, 'destroy'])->name('courts.destroy');
+    //Route::get('/courts/create', [CourtController::class, 'create'])->name('courts.create');
+    //Route::get('/courts/{court}/edit', [CourtController::class, 'edit'])->name('courts.edit');
+    //Route::post('/courts', [CourtController::class, 'store'])->name('courts.store');
+   // Route::put('/courts/{court}', [CourtController::class, 'update'])->name('courts.update');
+    //Route::delete('/courts/{court}', [CourtController::class, 'destroy'])->name('courts.destroy');
 
     /** GERENCIAR JOGOS */
-
     Route::get('/games/edit/{id}', [GameController::class, 'edit'])->name('games.edit');
     Route::get('/games/status/{id}/{status}', [GameController::class, 'status'])->name('games.status');
     Route::put('/games/{id}', [GameController::class, 'update'])->name('games.update');
@@ -37,6 +37,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/result/{id}', [SetResultController::class, 'create'])->name('result.create');
 
     /** GERENCIAR JOGADORES */
+    Route::get('/team/{championshipId}', [TeamController::class, 'index'])->name('team.index');
+    Route::post('/team/{name}/{championshipId}', [TeamController::class, 'findTeamByNameAndChampionship'])->name('team.find');
+
+    /** GERENCIAR CAMPEONATOS */
+    Route::get('/championships', [ChampionshipController::class, 'index'])->name('championships.index');
+    Route::get('/championships/{name}', [ChampionshipController::class, 'show'])->name('championships.show');
 
     /** GERENCIAR PESSOAS */
 

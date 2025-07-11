@@ -22,10 +22,13 @@ const findPlayer = async () => {
         players.value = response.data.data ?? [];
     } catch (error) {
         errorMessage.value = error.response.data.message
+        players.value = [];
     } finally {
         isLoading.value = false;
     }
 };
+
+const refreshChampionship = () => players.value = [];
 
 watch(() => {
     if (errorMessage.value) {
@@ -78,12 +81,27 @@ watch(() => {
             <div class="mt-10 max-w-2xl w-full mx-auto px-4 sm:px-6 lg:px-8">
                 <form @submit.prevent="findPlayer">
                     <div class="relative">
-                        <input type="text" v-model="form.name" required
+                        <input type="text" v-model="form.name" required minlength="3" maxlength="30"
                             class="p-3 sm:p-4 block w-full border-gray-400 rounded-full sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
                             placeholder="Informe o nome do jogador">
+
                         <div class="absolute top-1/2 end-2 -translate-y-1/2">
+                            <a @click="refreshChampionship"
+                                class="size-10 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-full border border-transparent text-gray-400 hover:text-gray-800 focus:outline-hidden focus:text-gray-800 disabled:opacity-50 disabled:pointer-events-none dark:hover:text-white dark:focus:text-white hover:bg-gray-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" class="lucide lucide-trophy-icon lucide-trophy">
+                                    <path d="M10 14.66v1.626a2 2 0 0 1-.976 1.696A5 5 0 0 0 7 21.978" />
+                                    <path d="M14 14.66v1.626a2 2 0 0 0 .976 1.696A5 5 0 0 1 17 21.978" />
+                                    <path d="M18 9h1.5a1 1 0 0 0 0-5H18" />
+                                    <path d="M4 22h16" />
+                                    <path d="M6 9a6 6 0 0 0 12 0V3a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1z" />
+                                    <path d="M6 9H4.5a1 1 0 0 1 0-5H6" />
+                                </svg>
+                            </a>
+
                             <button type="submit"
-                                class="size-10 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-full border border-transparent text-gray-400 hover:text-gray-800 focus:outline-hidden focus:text-gray-800 bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:hover:text-white dark:focus:text-white">
+                                class="size-10 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-full border border-transparent text-gray-400 hover:text-gray-800 focus:outline-hidden focus:text-gray-800 disabled:opacity-50 disabled:pointer-events-none dark:hover:text-white dark:focus:text-white hover:bg-gray-100">
                                 <svg class="size-4 text-gray-400 dark:text-neutral-500"
                                     xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                     viewBox="0 0 16 16">
@@ -108,7 +126,8 @@ watch(() => {
             <!-- Card Section -->
             <div v-if="players.length">
                 <div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
-                    <div class="flex justify-center gap-x-6 sm:gap-x-12 lg:gap-x-24">
+                    <div
+                        class="grid sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-2 gap-3 sm:gap-6 gap-x-6 sm:gap-x-12 lg:gap-x-24">
                         <div v-for="player in players"
                             class="flex flex-col bg-white border border-gray-400 shadow-2xs rounded-xl">
                             <div class="p-4 md:p-5 flex justify-between gap-x-3">
@@ -143,7 +162,7 @@ watch(() => {
             <!-- End Card Section -->
 
             <!-- Card Section -->
-            <div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
+            <div v-if="!players.length" class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
                 <div class="flex justify-center gap-x-6 sm:gap-x-12 lg:gap-x-24">
                     <div v-for="championship in championships"
                         class="flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl dark:bg-neutral-900 dark:border-neutral-800">
