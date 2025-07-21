@@ -8,9 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Court extends Model
 {
     use HasFactory;
-
+    
     public $incrementing = false;
     protected $keyType = 'string';   
-    protected $fillable = ['name', 'number'];
+    protected $fillable = ['id','name', 'number', 'enable'];
 
 }

@@ -5,10 +5,32 @@ namespace App\Http\Services;
 use App\Models\Game;
 use Exception;
 use Illuminate\Database\QueryException;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class GameService
 {
+
+    // public function findGamesByChampionship($championship_id, $schedule = null, $paginate = false)
+    // {
+    //     try {
+    //         $query = Game::with(['teamOne', 'teamTwo', 'status', 'championship', 'court', 'setResults'])
+    //             ->where("championship_id", $championship_id);
+
+    //         if ($schedule) {
+    //             $query->whereDate("schedule", $schedule);
+    //         }
+    //         $query->orderBy('schedule');
+    //         return $paginate ? $query->paginate(10) : $query->get();
+    //     } catch (QueryException $e) {
+    //         Log::channel('database_errors')->error('Erro ao buscar o game no banco de dados', [
+    //             'exception' => $e->getMessage(),
+    //             'sql' => $e->getSql(),
+    //             'bindings' => $e->getBindings()
+    //         ]);
+    //     }
+    //     return collect();
+    // }
 
     public function findById(string $id)
     {
@@ -87,12 +109,17 @@ class GameService
         }
     }
 
-    public function findAllGamesBySchedule($championship_id, $schedule = '2025-08-28')
+    public function findAllGamesBySchedule($championship_id, $schedule = null, $paginate = false)
     {
         try {
-            return Game::with(['teamOne', 'teamTwo', 'status', 'championship', 'court', 'setResults'])
-                ->where("championship_id", $championship_id)
-                ->orderBy('schedule')->get();
+            $query = Game::with(['teamOne', 'teamTwo', 'status', 'championship', 'court', 'setResults'])
+                ->where("championship_id", $championship_id);
+
+            if ($schedule) {
+                $query->whereDate("schedule", $schedule);
+            }
+            $query->orderBy('schedule');
+            return $paginate ? $query->paginate(10) : $query->get();
         } catch (QueryException $e) {
             Log::channel('database_errors')->error('Erro ao buscar o game no banco de dados', [
                 'exception' => $e->getMessage(),
@@ -100,6 +127,7 @@ class GameService
                 'bindings' => $e->getBindings()
             ]);
         }
+        return collect();
     }
 
     public function findGamesByStatus($championship_id, $status)
@@ -115,10 +143,26 @@ class GameService
         }
     }
 
-    public function findGamesByChampionship()
+    public function findGamesByChampionship(Request $request, $championship_id, $paginate = false)
     {
         try {
-            return Game::with(['championship'])->get();
+            $search = $request->input('search');
+            $query = Game::with(['teamOne', 'teamTwo', 'status', 'championship', 'court', 'setResults'])
+                ->where("championship_id", $championship_id)
+                ->when($search, function ($query, $search) {
+                    $query->where(function ($q) use ($search) {
+                        $q->whereHas('teamOne', function ($teamQuery) use ($search) {
+                            $teamQuery->where('player_one', 'ILIKE', "%$search%")
+                                ->orWhere('player_two', 'ILIKE', "%$search%");
+                        })->orWhereHas('teamTwo', function ($teamQuery) use ($search) {
+                            $teamQuery->where('player_one', 'ILIKE', "%$search%")
+                                ->orWhere('player_two', 'ILIKE', "%$search%");
+                        });
+                    });
+                });
+
+            $query->orderBy('schedule');
+            return $paginate ? $query->paginate(10) : $query->get();
         } catch (QueryException $e) {
             Log::channel('database_errors')->error('Erro ao buscar o game no banco de dados', [
                 'exception' => $e->getMessage(),
@@ -126,6 +170,7 @@ class GameService
                 'bindings' => $e->getBindings()
             ]);
         }
+        return collect();
     }
 
     public function findAllGamesByTeam(string $team_id)
@@ -150,8 +195,40 @@ class GameService
             return $game->update($data);
         } catch (QueryException $e) {
             Log::error('Erro ao atualizar jogo: ' . $e->getMessage());
-
             Log::channel('database_errors')->error('Erro ao atualizar o game no banco de dados', [
+                'exception' => $e->getMessage(),
+                'sql' => $e->getSql(),
+                'bindings' => $e->getBindings()
+            ]);
+        }
+        return false;
+    }
+
+    public function create(array $data)
+    {
+        try {
+            return Game::create($data);
+        } catch (QueryException $e) {
+            Log::error('Erro ao criar jogo: ' . $e->getMessage());
+            Log::channel('database_errors')->error('Erro ao criar o game no banco de dados', [
+                'exception' => $e->getMessage(),
+                'sql' => $e->getSql(),
+                'bindings' => $e->getBindings()
+            ]);
+        }
+        return false;
+    }
+
+    public function delete(string $id)
+    {
+        try {
+            $game = Game::find($id);
+            if (!$game) {
+                return false;
+            }
+            return $game->delete();
+        } catch (QueryException $e) {
+            Log::error('Erro ao excluir o jogo no banco de dados', [
                 'exception' => $e->getMessage(),
                 'sql' => $e->getSql(),
                 'bindings' => $e->getBindings()

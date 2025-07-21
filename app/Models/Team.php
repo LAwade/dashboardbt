@@ -9,7 +9,7 @@ class Team extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['player_one', 'player_two'];
+    protected $fillable = ['championship_id', 'player_one', 'player_two'];
 
     public function matchesAsTeamOne()
     {
@@ -19,5 +19,10 @@ class Team extends Model
     public function matchesAsTeamTwo()
     {
         return $this->hasMany(Game::class, 'team_two');
+    }
+
+    public function championship()
+    {
+        return $this->belongsTo(Championship::class);
     }
 }

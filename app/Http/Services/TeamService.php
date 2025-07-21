@@ -46,26 +46,37 @@ class TeamService
         }
     }
 
+    public function findAllTeamByChampionship($championshipId)
+    {
+        try {
+            $teams = Team::where('championship_id', $championshipId)
+            ->orderBy('player_one')
+            ->get();
+            return $teams;
+        } catch (QueryException $e) {
+            Log::channel('database_errors')->error('Erro ao buscar jogador no banco de dados', [
+                'exception' => $e->getMessage(),
+                'sql' => $e->getSql(),
+                'bindings' => $e->getBindings()
+            ]);
+        } catch (\Exception $e) {
+            return collect();
+        }
+    }
+
     public function findTeamByChampionship(Request $request, $championshipId, int $limit = 10)
     {
         try {
             $search = $request->input('search');
-
-            $teams = Team::where(function ($query) use ($championshipId) {
-                $query->whereHas('matchesAsTeamOne', function ($q) use ($championshipId) {
-                    $q->where('championship_id', $championshipId);
-                })->orWhereHas('matchesAsTeamTwo', function ($q) use ($championshipId) {
-                    $q->where('championship_id', $championshipId);
+            $teams = Team::where('championship_id', $championshipId)
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('player_one', 'ILIKE', "%$search%")
+                      ->orWhere('player_two', 'ILIKE', "%$search%");
                 });
             })
-                ->when($search, function ($query, $search) {
-                    $query->where(function ($q) use ($search) {
-                        $q->where('player_one', 'ILIKE', "%$search%")  // PostgreSQL (ILIKE é case-insensitive)
-                            ->orWhere('player_two', 'ILIKE', "%$search%");
-                    });
-                })
-                ->orderBy('player_one')
-                ->paginate(10);
+            ->orderBy('player_one')
+            ->paginate($limit);
             return $teams;
         } catch (QueryException $e) {
             Log::channel('database_errors')->error('Erro ao buscar jogador no banco de dados', [
@@ -98,5 +109,61 @@ class TeamService
         } catch (\Exception $e) {
             return collect();
         }
+    }
+
+    public function create(array $data)
+    {
+        try {
+            $team = Team::create($data);
+            return $team;
+        } catch (\Exception $e) {
+            Log::error('Erro ao criar a equipe no banco de dados', [
+                'exception' => $e->getMessage(),
+                'data' => $data
+            ]);
+        } catch (QueryException $e) {
+            Log::channel('database_errors')->error('Erro ao criar a equipe no banco de dados', [
+                'exception' => $e->getMessage(),
+                'sql' => $e->getSql(),
+                'bindings' => $e->getBindings()
+            ]);
+        }
+        return false;
+    }
+
+    public function update(int $id, array $data)
+    {
+        try {
+            $team = Team::find($id);
+            if (!$team) {
+                return false;
+            }
+            return $team->update($data);
+        } catch (QueryException $e) {
+            Log::channel('database_errors')->error('Erro ao atualizar a equipe no banco de dados', [
+                'exception' => $e->getMessage(),
+                'sql' => $e->getSql(),
+                'bindings' => $e->getBindings()
+            ]);
+        }
+        return false;
+    }
+
+    public function delete(string $id)
+    {
+        try {
+            $team = Team::find($id);
+            if (!$team) {
+                return false;
+            }
+            return $team->delete();
+        } catch (QueryException $e) {
+            Log::error('Erro ao excluir a equipe no banco de dados', [
+                'exception' => $e->getMessage(),
+                'sql' => $e->getSql(),
+                'bindings' => $e->getBindings()
+            ]);
+        }
+        return false;
     }
 }

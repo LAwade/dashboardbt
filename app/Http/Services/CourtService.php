@@ -7,6 +7,7 @@ use App\Models\Game;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class CourtService
 {
@@ -36,15 +37,14 @@ class CourtService
                 'sql' => $e->getSql(),
                 'bindings' => $e->getBindings()
             ]);
-        } catch (\Exception $e) {
-            return false;
-        }
+        } 
+        return collect();
     }
 
     public function findAll()
     {
         try {
-            $courts = Court::all();
+            $courts = Court::orderBy('number')->get();
             return $courts;
         } catch (QueryException $e) {
             Log::channel('database_errors')->error('Erro ao adicionar a cidade no banco de dados', [
@@ -52,9 +52,23 @@ class CourtService
                 'sql' => $e->getSql(),
                 'bindings' => $e->getBindings()
             ]);
-        } catch (\Exception $e) {
-            return false;
         }
+        return collect();
+    }
+
+    public function findByName(string $name)
+    {
+        try {
+            $courts = Court::where('name', 'ILIKE', "%$name%")->orderBy('name')->get();
+            return $courts;
+        } catch (QueryException $e) {
+            Log::channel('database_errors')->error('Erro ao adicionar a cidade no banco de dados', [
+                'exception' => $e->getMessage(),
+                'sql' => $e->getSql(),
+                'bindings' => $e->getBindings()
+            ]);
+        }
+        return collect();
     }
 
     public function findById(string $id)
@@ -68,17 +82,15 @@ class CourtService
                 'sql' => $e->getSql(),
                 'bindings' => $e->getBindings()
             ]);
-        } catch (\Exception $e) {
-            logger(['error' => $e->getMessage()]);
-            return false;
-        }
+        } 
+        return collect();
     }
 
     public function findCourtByGameId(string $id){
         try {
             $game = Game::find($id);
             if(!$game){
-                return null;
+                return collect();
             }
             return Court::find($game->court_id);
         } catch (QueryException $e) {
@@ -86,23 +98,63 @@ class CourtService
                 'exception' => $e->getMessage(),
                 'sql' => $e->getSql(),
                 'bindings' => $e->getBindings()
+          
             ]);
         }
+        return collect();
     }
 
     public function create(array $data)
     {
-        return Court::create($data);
+        try {
+            $data['id'] = Str::uuid();
+            $court = Court::create($data);
+            return $court;
+        } catch (\Exception $e) {
+            Log::error('Erro ao criar a quadra no banco de dados', [
+                'exception' => $e->getMessage(),
+                'data' => $data
+            ]);
+        } catch (QueryException $e) {
+            Log::channel('database_errors')->error('Erro a quadra no banco de dados', [
+                'exception' => $e->getMessage(),
+                'sql' => $e->getSql(),
+                'bindings' => $e->getBindings()
+            ]);
+        }
+        return collect();
     }
 
-    public function update(Court $court, array $data)
+    public function update(string $id, array $data)
     {
-        $court->update($data);
-        return $court;
+        try {
+            $court = Court::find($id);
+            if (!$court) {
+                return collect();
+            }
+            return $court->update($data);
+        } catch (QueryException $e) {
+            Log::channel('database_errors')->error('Erro ao atualizar a quadra no banco de dados', [
+                'exception' => $e->getMessage(),
+                'sql' => $e->getSql(),
+                'bindings' => $e->getBindings()
+            ]);
+        }
+        return collect();
     }
 
-    public function delete(Court $court)
+    public function delete(string $id)
     {
-        return $court->delete();
+        try {
+            $court = Court::findOrFail($id);
+            return $court->delete();
+        } catch (QueryException $e) {
+            Log::error('Erro ao excluir a quadra no banco de dados', [
+                'exception' => $e->getMessage(),
+                'sql' => $e->getSql(),
+                'bindings' => $e->getBindings()
+            ]);
+        }
+        return collect();
     }
 }

@@ -12,12 +12,32 @@ use Inertia\Inertia;
 class CourtController extends Controller
 {
 
-    public function __construct(protected CourtService $courtService, protected GameService $gameService, protected StatusService $statusService) {}
+    public function __construct(
+        protected CourtService $courtService,
+        protected GameService $gameService,
+        protected StatusService $statusService
+    ) {}
 
     /**
      * Display a listing of the resource.
      */
-    public function index() {}
+    public function index(Request $request)
+    {
+        $name = $request->input('search');
+        $courts = $this->courtService->findAll();
+        $findCourts = [];
+        if ($name) {
+            $findCourts = $this->courtService->findByName($name);
+        }
+
+        if (count($findCourts)) {
+            $courts = $findCourts;
+        }
+
+        return Inertia::render('Courts/Index', [
+            'courts' => $courts
+        ]);
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -36,11 +56,13 @@ class CourtController extends Controller
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'number' => 'required|integer',
-            'company_id' => 'required|exists:companies,id',
+            'enable' => 'required|boolean',
         ]);
-        // Assuming you have a Court model
-        // Court::create($data);
-        return redirect()->route('courts.index')->with('success', 'Court created successfully.');
+        $response = $this->courtService->create($data);
+        if (!$response) {
+            return redirect()->route('courts.index')->with('error', 'Erro ao salvar a quadra. Tente novamente.');
+        }
+        return redirect()->route('courts.index')->with('success', 'Quadra salva com sucesso!');
     }
 
     /**
@@ -50,13 +72,11 @@ class CourtController extends Controller
     {
         $games = $this->gameService->findWithTeamByCourt($id);
         $court = $this->courtService->findById($id);
-        
         $firstGame = $this->gameService->findFirstGameByCourt($id);
-
         $courts = $this->courtService->findAll();
         $status = $this->statusService->findAll();
 
-        return Inertia::render('Courts/Index', [
+        return Inertia::render('Courts/PainelGeral', [
             'games' => $games,
             'court' => $court,
             'courts' => $courts,
@@ -68,17 +88,35 @@ class CourtController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
-    {
-        
-    }
+    public function edit(string $id) {}
 
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
     {
-        //
+        $flash = [];
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'number' => 'required|integer',
+            'enable' => 'required|boolean',
+        ]);
+
+        $response = false;
+        if (isset($id)) {
+            $response = $this->courtService->update($id, $data);
+        }
+
+        if (!$response) {
+            $flash['error'] = 'Erro ao atualizar a quadra. Tente novamente!';
+        } else {
+            $flash['success'] = 'Quadra atualizada com sucesso!';
+        }
+
+        return Inertia::render('Courts/Index', [
+            'courts' => $this->courtService->findAll(),
+            'flash' => $flash
+        ]);
     }
 
     /**
@@ -86,6 +124,16 @@ class CourtController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $response = $this->courtService->delete($id);
+        $flash = [];
+
+        if (!$response) {
+            $flash['error'] = 'Erro ao excluir a quadra. Tente novamente!';
+        } else {
+            $flash['success'] = 'Quadra excluído com sucesso!';
+        }
+
+        session()->flash('success', 'Quadra excluído com sucesso!');
+        return Inertia::location(route('courts.index'));
     }
 }

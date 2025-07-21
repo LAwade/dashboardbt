@@ -12,7 +12,7 @@ class Championship extends Model
     protected $keyType = 'string';        // 👈 necessário se for UUID
     public $incrementing = false;
 
-    protected $fillable = ['name', 'image', 'description', 'status_id', 'date'];
+    protected $fillable = ['id', 'name', 'image', 'description', 'status_id', 'date'];
 
     protected $casts = [
         'date' => 'datetime',

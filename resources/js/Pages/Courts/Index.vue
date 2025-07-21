@@ -1,209 +1,173 @@
 <script setup>
 
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { ref, computed, onMounted } from 'vue';
-import { usePage, router, Head } from '@inertiajs/vue3';
-
-import EditResultGameModal from '@/Components/EditResultGameModal.vue';
 import GameStatus from '@/Components/GameStatus.vue';
-import DropdownMenu from '@/Components/DropdownMenu.vue';
+import { ref, watch, computed } from 'vue';
+import { usePage, router, Head } from '@inertiajs/vue3';
+import EditChampionship from '@/Components/EditChampionship.vue';
+import EditCourts from '@/Components/EditCourts.vue';
 
 const page = usePage();
-
-const games = ref([]);
-const infos = ref({});
-
-
-/** RESULTADO */
-const editingResult = ref(false);
-const selectedResult = ref(null);
-
-const editResult = (game) => {
-  selectedResult.value = game;
-  editingResult.value = true;
-};
-
-const flash = usePage().props.flash;
-
-function getSetPlacar(game, index = 0) {
-  const set = game.set_results?.[index];
-
-  if (!set) {
-    return { teamOne: 0, teamTwo: 0 };
-  }
-
-  if (set.team_win === game.team_one.id) {
-    return { teamOne: set.game_win, teamTwo: set.game_lose };
-  } else {
-    return { teamOne: set.game_lose, teamTwo: set.game_win };
-  }
-}
+const courts = ref(page.props.courts);
+const modal = ref(false)
+const dataSelected = ref(null)
+const search = ref('');
 
 function formatSchedule(value) {
-  if (!value) return '-';
-
-  const date = new Date(value);
-  const day = String(date.getDate()).padStart(2, '0');
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const hours = String(date.getHours()).padStart(2, '0');
-  const minutes = String(date.getMinutes()).padStart(2, '0');
-
-  return `${day}/${month} ${hours}:${minutes}`;
+    if (!value) return '-';
+    const date = new Date(value);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = String(date.getFullYear()).padStart(4, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+    return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
 }
 
-const findCourts = async () => {
-  const pathParts = window.location.pathname.split('/');
-  const uuid = pathParts[pathParts.length - 1];
-  try {
-    const response = await axios.get(`/api/data/court/${uuid}`);
-    games.value = response.data.data.games;
-    infos.value = {
-      court: response.data.data.court,
-      first_game: response.data.data.first_game,
-      courts: response.data.data.courts,
-      status: response.data.data.status
-    }
-    return response.data.data.games
-  } catch (error) {
-    console.error(error)
-  }
-}
-
-onMounted(async () => {
-  await findCourts()
-
-  if (flash.success || flash.error) {
-    setTimeout(() => {
-      flash.success = null;
-      flash.error = null;
-    }, 3000);
-  }
-
-  window.Echo.channel('games')
-    .listen('.updated.event', async (event) => {
-      const updatedGame = await findCourts()
-      const index = games.value.findIndex(g => g.id === updatedGame.id);
-      if (index !== -1) {
-        games.value.splice(index, 1, updatedGame);
-      }
+const findCourt = () => {
+    router.get(route('courts.index'), {
+        search: search.value || ''
+    }, {
+        preserveScroll: true,
+        preserveState: true,
+        onSuccess: (response) => {
+            courts.value = response.props.courts
+        },
     });
-});
+};
+
+const deleteCourt = (id) => {
+    const confirmed = window.confirm('Tem certeza que deseja excluir esta quadra?');
+    if (!confirmed) return;
+    router.delete(route('courts.destroy', { id }), {
+        preserveScroll: true,
+        preserveState: false,
+    });
+};
+
+const openModal = (courts) => {
+    dataSelected.value = courts;
+    modal.value = true;
+};
+
+watch([search], findCourt);
 
 </script>
 
 <template>
 
-  <Head title="Dashboard" />
-  <AuthenticatedLayout>
-    <div class="py-12" v-if="infos.first_game || games.length">
-      <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-        <div class="space-y-4">
-          <div class="text-4xl font-semibold text-gray-700">{{ infos.court.name }}</div>
-          <div
-            class="w-full p-4 text-center bg-white border border-gray-200 rounded-lg shadow-sm sm:p-8 dark:bg-white-800 dark:border-gray-200">
-            <p class="text-base text-gray-500 sm:text-lg dark:text-gray-500">{{ infos.first_game.championship.name }}
-            </p>
-            <h5 class="mb-2 text-3xl font-bold text-gray-900 dark:text-gray-800">{{ infos.first_game.team_one.player_one
-              }} /
-              {{ infos.first_game.team_one.player_two }} &nbsp;
-              {{ getSetPlacar(infos.first_game, 0).teamOne }} X {{ getSetPlacar(infos.first_game, 0).teamTwo }}
+    <Head title="Quadras" />
+    <AuthenticatedLayout>
+        <EditCourts :open="modal" :courts="dataSelected"  @close="modal = false" :key="dataSelected ? dataSelected.id : 'new'"/>
+        <div class="py-1">
+            <div class="max-w-6xl py-2 px-2 sm:px-2 lg:px-2 lg:py-2 mx-auto">
+                <div class="max-w-xl text-center mx-auto">
+                    <div class="mt-10 max-w-2xl w-full mx-auto px-4 sm:px-6 lg:px-8">
+                        <div class="relative">
+                            <input type="text" v-model="search" minlength="3" maxlength="30"
+                                class="p-3 sm:p-4 block w-full border-gray-300 rounded-xl sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+                                placeholder="Pesquise a quadra pelo nome">
 
-              <template v-if="infos.first_game.set_results?.[1]">
-                | {{ getSetPlacar(infos.first_game, 1).teamOne }} X {{ getSetPlacar(infos.first_game, 1).teamTwo }}
-              </template>
-
-              <!-- Tie-break (condicional e com label) -->
-              <template v-if="infos.first_game.set_results?.[2]">
-                | {{ getSetPlacar(infos.first_game, 2).teamOne }} X {{ getSetPlacar(infos.first_game, 2).teamTwo }}
-                <span v-if="infos.first_game.set_results[2].tie_break" class="text-xs text-yellow-500">
-                  (tie-break)</span>
-              </template>
-
-              &nbsp; {{ infos.first_game.team_two.player_one }} / {{ infos.first_game.team_two.player_two }}
-            </h5>
-            <p class="text-base text-gray-500 sm:text-lg dark:text-gray-500">Jogo: {{ infos.first_game.id }} - {{
-              infos.first_game.category }} - {{ formatSchedule(infos.first_game.schedule) }}</p>
-          </div>
-
-          <div class="text-2xl font-semibold text-gray-700">Próximos jogos</div>
-          <div class="grid mb-8 border border-gray-200 rounded-lg shadow-xs md:mb-12 "
-            :class="games.length > 1 ? 'md:grid-cols-2' : 'md:grid-cols-1'">
-
-            <figure v-for="game in games" :key="game.id"
-              class="flex flex-col items-center justify-center text-center bg-gray-300 border-b border-gray-300 rounded-t-lg md:rounded-t-none md:rounded-ss-lg md:border-e dark:bg-gray-50 dark:border-gray-200">
-              <blockquote class="mx-auto text-gray-500 dark:text-gray-400">
-                <p class="my-4 text-gray-500">JOGO: {{ game.id }} | {{ formatSchedule(game.schedule) }} | {{
-                  game.category }}</p>
-                <GameStatus :key="game.id" :status="game.status_id" />
-
-                <h3 class="text-2xl p-2 font-semibold text-gray-900 dark:text-gray-600">
-                  <i>{{ game.team_one.player_one }}</i> / <i>{{ game.team_one.player_two }}</i>
-                </h3>
-                <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-700">
-                  {{ getSetPlacar(game, 0).teamOne }} X {{ getSetPlacar(game, 0).teamTwo }}
-                  <!-- Set 2 (condicional) -->
-                  <template v-if="game.set_results?.[1]">
-                    | {{ getSetPlacar(game, 1).teamOne }} X {{ getSetPlacar(game, 1).teamTwo }}
-                  </template>
-
-                  <!-- Tie-break (condicional e com label) -->
-                  <template v-if="game.set_results?.[2]">
-                    | {{ getSetPlacar(game, 2).teamOne }} X {{ getSetPlacar(game, 2).teamTwo }}
-                    <span v-if="game.set_results[2].tie_break" class="text-xs text-gray-500"> (Tie-break)</span>
-                  </template>
-                </h3>
-
-                <h3 class="text-2xl font-semibold text-gray-900 dark:text-gray-600">
-                  <i>{{ game.team_two.player_one }}</i> / <i>{{ game.team_two.player_two }}</i>
-                </h3>
-
-                <div class="flex items-center p-4">
-                  <div class="inline-flex rounded-md shadow-xs mx-auto" role="group">
-                    <div v-if="game.status_id === 1">
-                      <button type="button" @click="router.visit(route('games.status', { id: game.id, status: 2 }))"
-                        class="mx-1 px-5 py-2 text-sm font-medium text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 rounded-lg text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">Iniciar</button>
+                            <div class="absolute top-1/2 end-2 -translate-y-1/2">
+                                <a href="#" @click="openModal"
+                                    class="size-10 ml-2 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-xl bg-green-500 border border-transparent text-white hover:text-white hover:bg-green-600">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" class="lucide lucide-plus-icon lucide-plus">
+                                        <path d="M5 12h14" />
+                                        <path d="M12 5v14" />
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
                     </div>
-
-                    <div v-if="game.status_id === 2">
-                      <EditResultGameModal :key="game.id" :open="editingResult" :game="game"
-                        @close="editingResult = false" />
-                      <button type="button" @click="editResult(game)"
-                        class="mx-1 px-5 py-2 text-sm font-medium text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 rounded-lg text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">Finalizar</button>
-                    </div>
-
-                    <div>
-                      <DropdownMenu :key="game.id" :game="game" :status="infos.status" :courts="infos.courts"
-                        @edit="editGame" @result="resultGame" />
-                    </div>
-                  </div>
                 </div>
+            </div>
+            <!-- Card Blog -->
+            <div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
+                <!-- Grid -->
+                <div class="grid sm:grid-cols-4 lg:grid-cols-4 gap-6">
+                    <!-- Card -->
+                    <div v-for="court in courts"
+                        class="group flex flex-col h-full bg-white border border-gray-200 shadow-2xs rounded-xl">
+                        <div class="p-4 md:p-6">
+                            <h3 class="text-xl font-semibold text-blue-600">
+                                {{ court.name }} [{{ court.number }}]
+                            </h3>
 
-              </blockquote>
-            </figure>
-          </div>
+                            <p class="mt-3 text-gray-500 dark:text-neutral-500">
 
-          <div class="bg-green-400 text-green-800 p-6 rounded mb-4" v-if="flash.success">
-            ✅ {{ flash.success }}
-          </div>
+                            </p>
+                            <div v-if="court.enable">
+                                <span
+                                    class="inline-flex items-center gap-x-1 py-1 px-2 rounded-full bg-green-100 text-green-900">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        class="lucide lucide-square-check-big-icon lucide-square-check-big">
+                                        <path d="M21 10.656V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12.344" />
+                                        <path d="m9 11 3 3L22 4" />
+                                    </svg>
+                                    <span class="inline-block text-xs font-medium">
+                                        ATIVO
+                                    </span>
+                                </span>
+                            </div>
+                            <div v-else>
+                                <span
+                                    class="inline-flex items-center gap-x-1 py-1 px-2 rounded-full bg-red-100 text-red-900">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" class="lucide lucide-x-icon lucide-x">
+                                        <path d="M18 6 6 18" />
+                                        <path d="m6 6 12 12" />
+                                    </svg>
+                                    <span class="inline-block text-xs font-medium">
+                                        DESATIVADA
+                                    </span>
+                                </span>
+                            </div>
 
-          <div class="bg-red-400 text-red-800 p-6 rounded mb-4" v-if="flash.error">
-            ❌ {{ flash.error }}
-          </div>
+                            <span class="block py-5 mb-1 text-xs font-semibold uppercase text-green-600">
+                                {{ formatSchedule(court.created_at) }}
+                            </span>
 
+                        </div>
+                        <div class="mt-auto flex border-t border-gray-300 divide-x divide-gray-300">
+                            <button
+                                class="w-full py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-medium bg-white text-blue-500 shadow-2xs hover:bg-gray-50 focus:outline-hidden focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:border-neutral-500 dark:hover:bg-neutral-200 dark:focus:bg-neutral-200"
+                                @click="openModal(court)">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" class="lucide lucide-pencil-icon lucide-pencil">
+                                    <path
+                                        d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" />
+                                    <path d="m15 5 4 4" />
+                                </svg>
+                                Editar
+                            </button>
+                            <button
+                                class="w-full py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-ee-xl bg-white text-red-500 shadow-2xs hover:bg-gray-50 focus:outline-hidden focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:border-neutral-500 dark:hover:bg-neutral-200"
+                                @click="deleteCourt(court.id)">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" class="lucide lucide-trash2-icon lucide-trash-2">
+                                    <path d="M10 11v6" />
+                                    <path d="M14 11v6" />
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+                                    <path d="M3 6h18" />
+                                    <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                                </svg>
+                                Excluir
+                            </button>
+                        </div>
+                    </div>
+                    <!-- End Card -->
+                </div>
+                <!-- End Grid -->
+            </div>
         </div>
-      </div>
-    </div>
-
-    <div v-else>
-      <div class="py-12">
-        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8 ">
-          <div class="flex items-center p-4">
-            <p class="text-2xl text-center font-semibold text-gray-700">Nenhum jogo encontrado nessa quadra!</p>
-            <button type="button" @click="router.visit(route('dashboard'))"
-              class="mx-1 px-5 py-2 text-sm font-medium text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Voltar</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </AuthenticatedLayout>
+        <!-- End Card Blog -->
+    </AuthenticatedLayout>
 </template>

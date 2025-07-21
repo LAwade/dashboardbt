@@ -3,8 +3,11 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { ref, computed, onMounted, watch } from 'vue';
 import { usePage, router, Head } from '@inertiajs/vue3';
+import TeamModal from '@/Components/TeamModal.vue';
 
 const page = usePage();
+const championship = ref(page.props.championship)
+
 const teams = ref(page.props.teams.data);
 const dataPage = ref(page.props.teams)
 const search = ref('');
@@ -12,6 +15,13 @@ const pagination = ref(1);
 
 const rawMessage = computed(() => page.props.message || null);
 const message = ref(null);
+
+const editing = ref(false);
+const selected = ref(null);
+const editModal = (team) => {
+    selected.value = team;
+    editing.value = true;
+};
 
 function formatSchedule(value) {
     if (!value) return '-';
@@ -28,10 +38,7 @@ function formatSchedule(value) {
 }
 
 const findTeams = () => {
-    const pathParts = window.location.pathname.split('/');
-    const uuid = pathParts[pathParts.length - 1];
-
-    router.get(route('team.index', { championshipId: uuid }), {
+    router.get(route('team.index', { championshipId: championship.value.id }), {
         page: pagination.value || 1,
         search: search.value || '',
     }, {
@@ -40,6 +47,15 @@ const findTeams = () => {
         onSuccess: (response) => {
             teams.value = response.props.teams.data;
         },
+    });
+};
+
+const deleteTeam = (id) => {
+    const confirmed = window.confirm('Tem certeza que deseja excluir este time?');
+    if (!confirmed) return;
+    router.delete(route('team.destroy', { id }), {}, {
+        preserveScroll: true,
+        preserveState: true,
     });
 };
 
@@ -76,6 +92,9 @@ watch([search, pagination], findTeams);
                                         <h2 class="text-xl font-semibold text-gray-800">
                                             Jogadores
                                         </h2>
+                                        <h2 class="text-sm text-gray-600">
+                                            {{ championship.name }}
+                                        </h2>
                                     </div>
 
                                     <div>
@@ -92,8 +111,9 @@ watch([search, pagination], findTeams);
                                                     </form>
                                                 </div>
                                             </div>
-
-                                            <button type="button"
+                                            <TeamModal :open="editing" :championship="championship"
+                                                @close="editing = false" />
+                                            <button type="button" @click="editModal"
                                                 class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-green-600 text-white hover:bg-green-700 focus:outline-hidden focus:bg-green-700 disabled:opacity-50 disabled:pointer-events-none">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                     viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -111,7 +131,7 @@ watch([search, pagination], findTeams);
 
                                 <!-- Table -->
                                 <table class="min-w-full divide-y divide-gray-200">
-                                    <thead>
+                                    <thead class="bg-gray-100">
                                         <tr>
                                             <th scope="col" class="px-6 py-3 text-start">
                                                 <span
@@ -175,8 +195,9 @@ watch([search, pagination], findTeams);
 
                                             <td class="size-px whitespace-nowrap">
                                                 <div class="px-4 gap-x-6 py-2 flex justify-end">
-                                                    <button type="button"
-                                                        @click="router.visit(route('team.edit', { id: team.id }))"
+                                                    <TeamModal :open="editing" :championship="championship"
+                                                        @close="editing = false" :team="selected" :key="team.id" />
+                                                    <button type="button" @click="editModal(team)"
                                                         class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg bg-blue-500 text-white shadow-2xs hover:bg-blue-400 focus:outline-hidden focus:bg-blue-400 disabled:opacity-50 disabled:pointer-events-none">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                             viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -190,7 +211,7 @@ watch([search, pagination], findTeams);
                                                         Editar
                                                     </button>
 
-                                                    <button type="button"
+                                                    <button type="button" @click="deleteTeam(team.id)"
                                                         class="py-2 px-3 bg-red-500 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg text-white shadow-2xs hover:bg-red-300 focus:outline-hidden focus:bg-red-400 disabled:opacity-50 disabled:pointer-events-none">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                             viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -214,10 +235,10 @@ watch([search, pagination], findTeams);
 
                                 <!-- Footer -->
                                 <div
-                                    class="px-6 py-4 grid gap-3 md:flex md:justify-between md:items-center border-t border-gray-200">
+                                    class="px-6 py-4 bg-gray-50 grid gap-3 md:flex md:justify-between md:items-center border-t border-gray-200">
                                     <div>
-                                        <p class="text-sm text-gray-600 dark:text-neutral-400">
-                                            <span class="font-semibold text-gray-400">{{ dataPage.total }} resultados -
+                                        <p class="text-sm text-gray-600">
+                                            <span class="font-semibold">{{ dataPage.total }} resultados -
                                                 Página {{ dataPage.current_page }} de {{ dataPage.last_page }}</span>
                                         </p>
                                     </div>

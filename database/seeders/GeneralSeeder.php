@@ -72,6 +72,8 @@ class GeneralSeeder extends Seeder
             'status_id' => 1, 
         ]);
 
+        $championship = Championship::first();
+
         /**
          * QUADRAS
          */
@@ -86,6 +88,8 @@ class GeneralSeeder extends Seeder
             ['name' => 'Quadra 8', 'number' => 8],
             ['name' => 'Quadra 9', 'number' => 9],
             ['name' => 'Quadra 10', 'number' => 10],
+            ['name' => 'Quadra 11', 'number' => 11],
+            ['name' => 'Quadra 12', 'number' => 12],
         ];
 
         foreach ($courts as $court) {
@@ -100,25 +104,22 @@ class GeneralSeeder extends Seeder
          * TIMES
          */
         $teams = [
-            ['player_one' => 'João Pedro', 'player_two' => 'Carlos Ferreira'],
-            ['player_one' => 'Jorge Silva', 'player_two' => 'Mariano Costa'],
-            ['player_one' => 'Lucas Henrique', 'player_two' => 'Pedro Henrique'],
-            ['player_one' => 'Fernando Lima', 'player_two' => 'Roberto Silva'],
-            ['player_one' => 'Francisco Santos', 'player_two' => 'Ricardo Oliveira'],
-            ['player_one' => 'Gabriel Rocha', 'player_two' => 'Paulo Martins'],
-            ['player_one' => 'Ítalo Souza', 'player_two' => 'Thiago Pereira'],
-            ['player_one' => 'Rafael Gomes', 'player_two' => 'Marcelo Alves'],
-            ['player_one' => 'Alcides Pedro', 'player_two' => 'Sabino Ferreira'],
-            ['player_one' => 'Bruno Silva', 'player_two' => 'Eduardo Costa'],
-            ['player_one' => 'Otávio Almeida', 'player_two' => 'Henrique Freitas'],
-            ['player_one' => 'Gustavo Lima', 'player_two' => 'Kleberson Alfredo'],
+            ['player_one' => 'João Pedro', 'player_two' => 'Carlos Ferreira', 'championship_id' => $championship->id],
+            ['player_one' => 'Jorge Silva', 'player_two' => 'Mariano Costa', 'championship_id' => $championship->id],
+            ['player_one' => 'Lucas Henrique', 'player_two' => 'Pedro Henrique', 'championship_id' => $championship->id],
+            ['player_one' => 'Fernando Lima', 'player_two' => 'Roberto Silva', 'championship_id' => $championship->id],
+            ['player_one' => 'Francisco Santos', 'player_two' => 'Ricardo Oliveira', 'championship_id' => $championship->id],
+            ['player_one' => 'Gabriel Rocha', 'player_two' => 'Paulo Martins', 'championship_id' => $championship->id],
+            ['player_one' => 'Ítalo Souza', 'player_two' => 'Thiago Pereira', 'championship_id' => $championship->id],
+            ['player_one' => 'Rafael Gomes', 'player_two' => 'Marcelo Alves', 'championship_id' => $championship->id],
+            ['player_one' => 'Alcides Pedro', 'player_two' => 'Sabino Ferreira', 'championship_id' => $championship->id],
+            ['player_one' => 'Bruno Silva', 'player_two' => 'Eduardo Costa', 'championship_id' => $championship->id],
+            ['player_one' => 'Otávio Almeida', 'player_two' => 'Henrique Freitas', 'championship_id' => $championship->id],
+            ['player_one' => 'Gustavo Lima', 'player_two' => 'Kleberson Alfredo', 'championship_id' => $championship->id],
         ];
 
         foreach ($teams as $team) {
-            Team::create([
-                'player_one' => $team['player_one'],
-                'player_two' => $team['player_two']
-            ]);
+            Team::create($team);
         }
 
         /**
@@ -128,7 +129,7 @@ class GeneralSeeder extends Seeder
         $quadra_dois = Court::where('number', 2)->first();
         $quadra_tres = Court::where('number', 3)->first();
         $quadra_quatro = Court::where('number', 4)->first();
-        $championship = Championship::first();
+        
         
         $games = [
             ['team_one' => 1, 'team_two' => 2, 'status_id' => 1, 'category' => "MASCULINO C", 'round' => 'GRUPOS', 'championship_id' => $championship->id, 'court_id' => $quadra_um->id, 'schedule' => '2025-08-28 13:00:00'],

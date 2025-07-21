@@ -309,6 +309,13 @@ onMounted(async () => {
                                             </div>
                                         </div>
                                     </td>
+
+                                    <td class="size-px whitespace-nowrap">
+                                        <div class="px-12 py-3">
+                                            {{ game.round }}
+                                        </div>
+                                    </td>
+
                                     <td class="size-px whitespace-nowrap">
                                         <div class="px-12 py-3">
                                             {{ game.category }}

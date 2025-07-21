@@ -26,6 +26,8 @@ class CourtSeeder extends Seeder
             ['name' => 'Quadra 8', 'number' => 8],
             ['name' => 'Quadra 9', 'number' => 9],
             ['name' => 'Quadra 10', 'number' => 10],
+            ['name' => 'Quadra 11', 'number' => 11],
+            ['name' => 'Quadra 12', 'number' => 12],
         ];
 
         foreach ($courts as $court) {

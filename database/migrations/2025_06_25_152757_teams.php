@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('player_one');
             $table->string('player_two');
+            $table->uuid('championship_id');
+            $table->foreign('championship_id')->references('id')->on('championships')->onDelete('cascade');
             $table->timestamps();
         });
     }

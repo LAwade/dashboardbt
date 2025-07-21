@@ -6,6 +6,7 @@ import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import { Link } from '@inertiajs/vue3';
+import Notification from '@/Components/Notification.vue';
 
 const showingNavigationDropdown = ref(false);
 
@@ -29,11 +30,15 @@ const showingNavigationDropdown = ref(false);
                             <!-- Navigation Links -->
                             <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                                 <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
-                                    Dashboard
+                                    Painel Geral
                                 </NavLink>
 
                                 <NavLink :href="route('championships.index')" :active="route().current('championships.index')">
                                     Campeonatos
+                                </NavLink>
+
+                                <NavLink :href="route('courts.index')" :active="route().current('courts.index')">
+                                    Quadras
                                 </NavLink>
                                 <!-- 
                                 <NavLink :href="route('panel')" :active="route().current('panel')">
@@ -144,6 +149,7 @@ const showingNavigationDropdown = ref(false);
 
             <!-- Page Content -->
             <main>
+                <Notification />
                 <slot />
             </main>
         </div>

@@ -165,14 +165,14 @@ watch(() => {
             <div v-if="!players.length" class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
                 <div class="flex justify-center gap-x-6 sm:gap-x-12 lg:gap-x-24">
                     <div v-for="championship in championships"
-                        class="flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl dark:bg-neutral-900 dark:border-neutral-800">
+                        class="flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl">
                         <div class="p-4 md:p-5 flex justify-between gap-x-3">
                             <div>
-                                <p class="text-xs uppercase text-gray-300 dark:text-neutral-300">
+                                <p class="text-xs uppercase text-gray-800">
                                     {{ championship.name }}
                                 </p>
                                 <div class="mt-1 flex items-center gap-x-2">
-                                    <h3 class="mt-1 text-xl font-medium text-gray-800 dark:text-neutral-200">
+                                    <h3 class="mt-1 text-xl font-medium text-gray-800">
                                         {{ championship.games_count }}
                                     </h3>
                                 </div>
@@ -184,7 +184,7 @@ watch(() => {
                             </div>
                         </div>
 
-                        <a class="py-3 px-4 md:px-5 inline-flex justify-between items-center text-sm text-gray-600 border-t border-gray-200 hover:bg-gray-50 focus:outline-hidden focus:bg-gray-50 rounded-b-xl dark:border-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
+                        <a class="py-3 px-4 md:px-5 inline-flex justify-between items-center text-sm text-gray-800 border-t border-gray-200 hover:bg-gray-50 focus:outline-hidden focus:bg-gray-50 rounded-b-xl"
                             href="#" @click="router.visit(route('panel.championship', { id: championship.id }))">
                             Ver jogos
                             <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
