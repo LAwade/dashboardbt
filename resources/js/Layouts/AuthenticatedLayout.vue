@@ -40,6 +40,11 @@ const showingNavigationDropdown = ref(false);
                                 <NavLink :href="route('courts.index')" :active="route().current('courts.index')">
                                     Quadras
                                 </NavLink>
+
+                                <NavLink :href="route('users.index')" :active="route().current('users.index')">
+                                    Usuários
+                                </NavLink>
+                                
                                 <!-- 
                                 <NavLink :href="route('panel')" :active="route().current('panel')">
                                     Painel

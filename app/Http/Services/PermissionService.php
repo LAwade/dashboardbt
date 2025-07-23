@@ -2,17 +2,17 @@
 
 namespace App\Http\Services;
 
-use App\Models\Status;
+use App\Models\Permission;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Log;
 
-class StatusService {
+class PermissionService {
 
     public function findAll(){
         try {
-            return Status::all();
+            return Permission::orderBy('name')->get();
         } catch (QueryException $e) {
-            Log::channel('database_errors')->error(__FUNCTION__ . ' - Erro ao adicionar o status no banco de dados', [
+            Log::channel('database_errors')->error(__FUNCTION__ . ' - Erro buscar permissões no banco de dados', [
                 'exception' => $e->getMessage(),
                 'sql' => $e->getSql(),
                 'bindings' => $e->getBindings()

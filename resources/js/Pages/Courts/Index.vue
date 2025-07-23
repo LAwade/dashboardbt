@@ -1,10 +1,8 @@
 <script setup>
 
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import GameStatus from '@/Components/GameStatus.vue';
 import { ref, watch, computed } from 'vue';
 import { usePage, router, Head } from '@inertiajs/vue3';
-import EditChampionship from '@/Components/EditChampionship.vue';
 import EditCourts from '@/Components/EditCourts.vue';
 
 const page = usePage();

@@ -7,12 +7,11 @@ export default defineConfig({
         host: '0.0.0.0',
         port: 5173,
         cors: {
-            origin: ['http://localhost:8181', 'http://127.0.0.1:8181', 'http://192.168.18.54:8181', 'https://8f8954b10e61.ngrok-free.app'], // ou a origem do Laravel
-            //origin: ['*'],
+            origin: ['http://localhost:8181', 'http://127.0.0.1:8181'], // ou a origem do Laravel
             credentials: true,
         },
         hmr: {
-            host: 'localhost', // ou o IP da máquina host
+            host: '127.0.0.1', // ou o IP da máquina host
         },
     },
     plugins: [

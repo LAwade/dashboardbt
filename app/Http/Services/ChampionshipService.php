@@ -15,7 +15,7 @@ class ChampionshipService
             $championships = Championship::whereRaw('name ILIKE ?', ["%{$name}%"])->get();
             return $championships;
         } catch (QueryException $e) {
-            Log::channel('database_errors')->error('Erro ao buscar o champeonato no banco de dados', [
+            Log::channel('database_errors')->error(__FUNCTION__ . ' - Erro ao buscar o champeonato no banco de dados', [
                 'exception' => $e->getMessage(),
                 'sql' => $e->getSql(),
                 'bindings' => $e->getBindings()
@@ -30,7 +30,7 @@ class ChampionshipService
             $championship = Championship::findOrFail($id);
             return $championship;
         } catch (QueryException $e) {
-            Log::channel('database_errors')->error('Erro ao buscar o champeonato no banco de dados', [
+            Log::channel('database_errors')->error(__FUNCTION__ . ' - Erro ao buscar o champeonato no banco de dados', [
                 'exception' => $e->getMessage(),
                 'sql' => $e->getSql(),
                 'bindings' => $e->getBindings()
@@ -46,7 +46,7 @@ class ChampionshipService
             $championship = Championship::orderBy('date', 'asc')->get();
             return $championship;
         } catch (QueryException $e) {
-            Log::channel('database_errors')->error('Erro ao buscar todos os campeonatos no banco de dados', [
+            Log::channel('database_errors')->error(__FUNCTION__ . ' - Erro ao buscar todos os campeonatos no banco de dados', [
                 'exception' => $e->getMessage(),
                 'sql' => $e->getSql(),
                 'bindings' => $e->getBindings()
@@ -61,7 +61,7 @@ class ChampionshipService
             $championships = Championship::withCount('games')->get();
             return $championships;
         } catch (QueryException $e) {
-            Log::channel('database_errors')->error('Erro ao buscar games por campeonato no banco de dados', [
+            Log::channel('database_errors')->error(__FUNCTION__ . ' - Erro ao buscar games por campeonato no banco de dados', [
                 'exception' => $e->getMessage(),
                 'sql' => $e->getSql(),
                 'bindings' => $e->getBindings()
@@ -82,7 +82,7 @@ class ChampionshipService
                 'data' => $data
             ]);
         } catch (QueryException $e) {
-            Log::channel('database_errors')->error('Erro ao criar o campeonato no banco de dados', [
+            Log::channel('database_errors')->error(__FUNCTION__ . ' - Erro ao criar o campeonato no banco de dados', [
                 'exception' => $e->getMessage(),
                 'sql' => $e->getSql(),
                 'bindings' => $e->getBindings()
@@ -100,7 +100,7 @@ class ChampionshipService
             }
             return $championship->update($data);
         } catch (QueryException $e) {
-            Log::channel('database_errors')->error('Erro ao atualizar o campeonato no banco de dados', [
+            Log::channel('database_errors')->error(__FUNCTION__ . ' - Erro ao atualizar o campeonato no banco de dados', [
                 'exception' => $e->getMessage(),
                 'sql' => $e->getSql(),
                 'bindings' => $e->getBindings()
@@ -115,7 +115,7 @@ class ChampionshipService
             $championship = Championship::findOrFail($id);
             return $championship->delete();
         } catch (QueryException $e) {
-            Log::error('Erro ao excluir o campeonato no banco de dados', [
+            Log::error(__FUNCTION__ . ' - Erro ao excluir o campeonato no banco de dados', [
                 'exception' => $e->getMessage(),
                 'sql' => $e->getSql(),
                 'bindings' => $e->getBindings()

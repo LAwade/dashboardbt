@@ -15,13 +15,13 @@ class SetResultService
         try {
             return SetResult::where('game_id', $id)->get();
         } catch (QueryException $e) {
-            Log::channel('database_errors')->error('Erro ao buscar a resultado no banco de dados', [
+            Log::channel('database_errors')->error(__FUNCTION__ . ' - Erro ao buscar a resultado no banco de dados', [
                 'exception' => $e->getMessage(),
                 'sql' => $e->getSql(),
                 'bindings' => $e->getBindings()
             ]);
         }
-        return false;
+        return collect();
     }
 
     public function create(array $data)
@@ -31,13 +31,13 @@ class SetResultService
             $set = SetResult::create($data);
             return $set;
         } catch (QueryException $e) {
-            Log::channel('database_errors')->error('Erro ao criar a resultado no banco de dados', [
+            Log::channel('database_errors')->error(__FUNCTION__ . ' - Erro ao criar a resultado no banco de dados', [
                 'exception' => $e->getMessage(),
                 'sql' => $e->getSql(),
                 'bindings' => $e->getBindings()
             ]);
         }
-        return false;
+        return collect();
     }
 
     public function updateOrCreate(array $where, array $data)
@@ -46,13 +46,13 @@ class SetResultService
             $set = SetResult::updateOrCreate($where, $data);
             return $set->update($data);
         } catch (QueryException $e) {
-            Log::channel('database_errors')->error('Erro ao atualizar/criar a resultado no banco de dados', [
+            Log::channel('database_errors')->error(__FUNCTION__ . ' - Erro ao atualizar/criar a resultado no banco de dados', [
                 'exception' => $e->getMessage(),
                 'sql' => $e->getSql(),
                 'bindings' => $e->getBindings()
             ]);
         }
-        return false;
+        return collect();
     }
 
     public function delete(string $id)
@@ -61,12 +61,12 @@ class SetResultService
             $set = SetResult::find($id);
             return $set->delete();
         } catch (QueryException $e) {
-            Log::channel('database_errors')->error('Erro ao remover a resultado no banco de dados', [
+            Log::channel('database_errors')->error(__FUNCTION__ . ' - Erro ao remover a resultado no banco de dados', [
                 'exception' => $e->getMessage(),
                 'sql' => $e->getSql(),
                 'bindings' => $e->getBindings()
             ]);
         }
-        return false;
+        return collect();
     }
 }

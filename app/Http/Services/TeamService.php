@@ -20,14 +20,13 @@ class TeamService
                 ->get();
             return $player;
         } catch (QueryException $e) {
-            Log::channel('database_errors')->error('Erro ao buscar jogador no banco de dados', [
+            Log::channel('database_errors')->error(__FUNCTION__ . ' - Erro ao buscar jogador no banco de dados', [
                 'exception' => $e->getMessage(),
                 'sql' => $e->getSql(),
                 'bindings' => $e->getBindings()
             ]);
-        } catch (\Exception $e) {
-            return collect();
-        }
+        } 
+        return collect();
     }
 
     public function findById(string $id)
@@ -36,14 +35,13 @@ class TeamService
             $player = Team::find($id);
             return $player;
         } catch (QueryException $e) {
-            Log::channel('database_errors')->error('Erro ao buscar jogador no banco de dados', [
+            Log::channel('database_errors')->error(__FUNCTION__ . ' - Erro ao buscar jogador no banco de dados', [
                 'exception' => $e->getMessage(),
                 'sql' => $e->getSql(),
                 'bindings' => $e->getBindings()
             ]);
-        } catch (\Exception $e) {
-            return collect();
         }
+        return collect();
     }
 
     public function findAllTeamByChampionship($championshipId)
@@ -54,14 +52,13 @@ class TeamService
             ->get();
             return $teams;
         } catch (QueryException $e) {
-            Log::channel('database_errors')->error('Erro ao buscar jogador no banco de dados', [
+            Log::channel('database_errors')->error(__FUNCTION__ . ' - Erro ao buscar jogador no banco de dados', [
                 'exception' => $e->getMessage(),
                 'sql' => $e->getSql(),
                 'bindings' => $e->getBindings()
             ]);
-        } catch (\Exception $e) {
-            return collect();
-        }
+        } 
+        return collect();
     }
 
     public function findTeamByChampionship(Request $request, $championshipId, int $limit = 10)
@@ -79,14 +76,13 @@ class TeamService
             ->paginate($limit);
             return $teams;
         } catch (QueryException $e) {
-            Log::channel('database_errors')->error('Erro ao buscar jogador no banco de dados', [
+            Log::channel('database_errors')->error(__FUNCTION__ . ' - Erro ao buscar jogador no banco de dados', [
                 'exception' => $e->getMessage(),
                 'sql' => $e->getSql(),
                 'bindings' => $e->getBindings()
             ]);
-        } catch (\Exception $e) {
-            return collect();
-        }
+        } 
+        return collect();
     }
 
     public function findTeamByNameAndChampionship(string $name, string $championshipId)
@@ -101,14 +97,13 @@ class TeamService
                 ->orWhere('player_two', 'ILIKE', "%{$name}%")->get();
             return $teams;
         } catch (QueryException $e) {
-            Log::channel('database_errors')->error('Erro ao buscar jogador no banco de dados', [
+            Log::channel('database_errors')->error(__FUNCTION__ . ' - Erro ao buscar time no banco de dados', [
                 'exception' => $e->getMessage(),
                 'sql' => $e->getSql(),
                 'bindings' => $e->getBindings()
             ]);
-        } catch (\Exception $e) {
-            return collect();
         }
+        return collect();
     }
 
     public function create(array $data)
@@ -117,18 +112,18 @@ class TeamService
             $team = Team::create($data);
             return $team;
         } catch (\Exception $e) {
-            Log::error('Erro ao criar a equipe no banco de dados', [
+            Log::error(__FUNCTION__ . ' - Erro ao criar a equipe no banco de dados', [
                 'exception' => $e->getMessage(),
                 'data' => $data
             ]);
         } catch (QueryException $e) {
-            Log::channel('database_errors')->error('Erro ao criar a equipe no banco de dados', [
+            Log::channel('database_errors')->error(__FUNCTION__ . ' - Erro ao criar a equipe no banco de dados', [
                 'exception' => $e->getMessage(),
                 'sql' => $e->getSql(),
                 'bindings' => $e->getBindings()
             ]);
         }
-        return false;
+        return collect();
     }
 
     public function update(int $id, array $data)
@@ -136,17 +131,17 @@ class TeamService
         try {
             $team = Team::find($id);
             if (!$team) {
-                return false;
+                return collect();
             }
             return $team->update($data);
         } catch (QueryException $e) {
-            Log::channel('database_errors')->error('Erro ao atualizar a equipe no banco de dados', [
+            Log::channel('database_errors')->error(__FUNCTION__ . ' - Erro ao atualizar a equipe no banco de dados', [
                 'exception' => $e->getMessage(),
                 'sql' => $e->getSql(),
                 'bindings' => $e->getBindings()
             ]);
         }
-        return false;
+        return collect();
     }
 
     public function delete(string $id)
@@ -154,16 +149,16 @@ class TeamService
         try {
             $team = Team::find($id);
             if (!$team) {
-                return false;
+                return collect();
             }
             return $team->delete();
         } catch (QueryException $e) {
-            Log::error('Erro ao excluir a equipe no banco de dados', [
+            Log::error(__FUNCTION__ . ' - Erro ao excluir a equipe no banco de dados', [
                 'exception' => $e->getMessage(),
                 'sql' => $e->getSql(),
                 'bindings' => $e->getBindings()
             ]);
         }
-        return false;
+        return collect();
     }
 }

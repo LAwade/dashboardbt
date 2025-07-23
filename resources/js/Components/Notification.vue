@@ -7,6 +7,7 @@ import 'vue3-toastify/dist/index.css';
 
 const page = usePage();
 const flash = ref(page.props.flash);
+console.log(flash.value)
 
 onMounted(() => {
     if (flash.value.error) {

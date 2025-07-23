@@ -19,7 +19,6 @@ function formatSchedule(value) {
     const day = String(date.getDate()).padStart(2, '0');
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const year = String(date.getFullYear()).padStart(4, '0');
-
     return `${day}/${month}/${year}`;
 }
 
@@ -69,7 +68,7 @@ watch([search], findChampionship);
                                 placeholder="Pesquise o campeonato pelo nome">
 
                             <div class="absolute top-1/2 end-2 -translate-y-1/2">
-                                <a href="#" @click="openModal(null)"
+                                <button type="button" @click="openModal(null)"
                                     class="size-10 ml-2 inline-flex justify-center items-center gap-x-2 text-sm font-semibold rounded-xl bg-green-500 border border-transparent text-white hover:text-white hover:bg-green-600">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
                                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -77,7 +76,7 @@ watch([search], findChampionship);
                                         <path d="M5 12h14" />
                                         <path d="M12 5v14" />
                                     </svg>
-                                </a>
+                                </button>
                             </div>
                         </div>
                     </div>

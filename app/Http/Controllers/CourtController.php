@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Services\CourtService;
 use App\Http\Services\GameService;
 use App\Http\Services\StatusService;
-use App\Models\Court;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -37,14 +36,6 @@ class CourtController extends Controller
         return Inertia::render('Courts/Index', [
             'courts' => $courts
         ]);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        return Inertia::render('Courts/Create');
     }
 
     /**
@@ -86,11 +77,6 @@ class CourtController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id) {}
-
-    /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
@@ -125,15 +111,13 @@ class CourtController extends Controller
     public function destroy(string $id)
     {
         $response = $this->courtService->delete($id);
-        $flash = [];
 
         if (!$response) {
-            $flash['error'] = 'Erro ao excluir a quadra. Tente novamente!';
+            session()->flash('error', 'Erro ao excluir a quadra. Tente novamente!');
         } else {
-            $flash['success'] = 'Quadra excluído com sucesso!';
+            session()->flash('success', 'Quadra excluída com sucesso!');
         }
 
-        session()->flash('success', 'Quadra excluído com sucesso!');
         return Inertia::location(route('courts.index'));
     }
 }

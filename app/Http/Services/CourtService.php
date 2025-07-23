@@ -32,7 +32,7 @@ class CourtService
 
             return $courts;
         } catch (QueryException $e) {
-            Log::channel('database_errors')->error('Erro ao adicionar a cidade no banco de dados', [
+            Log::channel('database_errors')->error(__FUNCTION__ . ' - Erro ao buscar a todos os games por quadra no banco de dados', [
                 'exception' => $e->getMessage(),
                 'sql' => $e->getSql(),
                 'bindings' => $e->getBindings()
@@ -47,7 +47,7 @@ class CourtService
             $courts = Court::orderBy('number')->get();
             return $courts;
         } catch (QueryException $e) {
-            Log::channel('database_errors')->error('Erro ao adicionar a cidade no banco de dados', [
+            Log::channel('database_errors')->error(__FUNCTION__ . ' - Erro ao buscar a todos as quadras no banco de dados', [
                 'exception' => $e->getMessage(),
                 'sql' => $e->getSql(),
                 'bindings' => $e->getBindings()
@@ -62,7 +62,7 @@ class CourtService
             $courts = Court::where('name', 'ILIKE', "%$name%")->orderBy('name')->get();
             return $courts;
         } catch (QueryException $e) {
-            Log::channel('database_errors')->error('Erro ao adicionar a cidade no banco de dados', [
+            Log::channel('database_errors')->error(__FUNCTION__ . ' - Erro ao buscar a quadra no banco de dados', [
                 'exception' => $e->getMessage(),
                 'sql' => $e->getSql(),
                 'bindings' => $e->getBindings()
@@ -77,7 +77,7 @@ class CourtService
             $court = Court::findOrFail($id);
             return $court;
         } catch (QueryException $e) {
-            Log::channel('database_errors')->error('Erro ao adicionar a cidade no banco de dados', [
+            Log::channel('database_errors')->error(__FUNCTION__ . ' - Erro ao buscar a quadra no banco de dados', [
                 'exception' => $e->getMessage(),
                 'sql' => $e->getSql(),
                 'bindings' => $e->getBindings()
@@ -94,7 +94,7 @@ class CourtService
             }
             return Court::find($game->court_id);
         } catch (QueryException $e) {
-            Log::channel('database_errors')->error('Erro ao adicionar a cidade no banco de dados', [
+            Log::channel('database_errors')->error(__FUNCTION__ . ' - Erro ao buscar a quadra por game no banco de dados', [
                 'exception' => $e->getMessage(),
                 'sql' => $e->getSql(),
                 'bindings' => $e->getBindings()
@@ -116,7 +116,7 @@ class CourtService
                 'data' => $data
             ]);
         } catch (QueryException $e) {
-            Log::channel('database_errors')->error('Erro a quadra no banco de dados', [
+            Log::channel('database_errors')->error(__FUNCTION__ . ' - Erro ao criar quadra no banco de dados', [
                 'exception' => $e->getMessage(),
                 'sql' => $e->getSql(),
                 'bindings' => $e->getBindings()
@@ -134,7 +134,7 @@ class CourtService
             }
             return $court->update($data);
         } catch (QueryException $e) {
-            Log::channel('database_errors')->error('Erro ao atualizar a quadra no banco de dados', [
+            Log::channel('database_errors')->error(__FUNCTION__ . ' - Erro ao atualizar a quadra no banco de dados', [
                 'exception' => $e->getMessage(),
                 'sql' => $e->getSql(),
                 'bindings' => $e->getBindings()
@@ -149,7 +149,7 @@ class CourtService
             $court = Court::findOrFail($id);
             return $court->delete();
         } catch (QueryException $e) {
-            Log::error('Erro ao excluir a quadra no banco de dados', [
+            Log::error(__FUNCTION__ . ' - Erro ao excluir a quadra no banco de dados', [
                 'exception' => $e->getMessage(),
                 'sql' => $e->getSql(),
                 'bindings' => $e->getBindings()

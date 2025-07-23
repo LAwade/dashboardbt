@@ -8,6 +8,7 @@ use App\Http\Controllers\PanelController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SetResultController;
 use App\Http\Controllers\TeamController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [PanelController::class, 'index'])->name('home');
@@ -21,10 +22,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     /** GERENCIAR QUADRAS */
     Route::get('/courts', [CourtController::class, 'index'])->name('courts.index');
-    Route::get('/courts/{court}', [CourtController::class, 'show'])->name('courts.show');
-    
-    //Route::get('/courts/create', [CourtController::class, 'create'])->name('courts.create');
-    Route::get('/courts', [CourtController::class, 'index'])->name('courts.index');
     Route::post('/courts', [CourtController::class, 'store'])->name('courts.store');
     Route::put('/courts/{court}', [CourtController::class, 'update'])->name('courts.update');
     Route::delete('/courts/{court}', [CourtController::class, 'destroy'])->name('courts.destroy');
@@ -34,7 +31,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/games/status/{id}/{status}', [GameController::class, 'status'])->name('games.status');
     Route::post('/games', [GameController::class, 'store'])->name('games.store');
     Route::put('/games/{id}', [GameController::class, 'update'])->name('games.update');
-
     Route::get('/games/championship/{id}', [GameController::class, 'index'])->name('games.index');
     Route::delete('/games/{id}', [GameController::class, 'destroy'])->name('games.destroy');
 
@@ -52,9 +48,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/championships', [ChampionshipController::class, 'store'])->name('championships.store');
     Route::put('/championships/{id}', [ChampionshipController::class, 'update'])->name('championships.update');
     Route::delete('/championships/{id}', [ChampionshipController::class, 'destroy'])->name('championships.destroy');
-    /** GERENCIAR PESSOAS */
 
-    
+    /** GERENCIAR PESSOAS */
+    Route::get('/users', [UserController::class, 'index'])->name('users.index');
+    Route::post('/users', [UserController::class, 'store'])->name('users.store');
+    Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');
+    Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
 });
 
 Route::middleware('auth')->group(function () {

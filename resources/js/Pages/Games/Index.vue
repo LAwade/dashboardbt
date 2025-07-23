@@ -144,6 +144,10 @@ watch([search, pagination], findTeams);
                   </thead>
 
                   <tbody class="divide-y divide-gray-200">
+                    <tr v-if="!games || games.length === 0">
+                      <td colspan="10" class="text-center py-4 text-gray-500">Nenhum dado
+                        encontrado!</td>
+                    </tr>
                     <tr v-for="game in games" :key="game.id"
                       class="bg-white hover:bg-gray-50 dark:hover:bg-neutral-200">
 
