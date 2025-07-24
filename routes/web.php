@@ -21,6 +21,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     /** GERENCIAR QUADRAS */
+    Route::get('/courts/{court}', [CourtController::class, 'show'])->name('courts.show');
     Route::get('/courts', [CourtController::class, 'index'])->name('courts.index');
     Route::post('/courts', [CourtController::class, 'store'])->name('courts.store');
     Route::put('/courts/{court}', [CourtController::class, 'update'])->name('courts.update');
