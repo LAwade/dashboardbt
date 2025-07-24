@@ -74,7 +74,7 @@ const saveTeam = () => {
 };
 
 const updatedTeam = () => {
-    router.put(route('team.update'), form.value, {
+    router.put(route('team.update', { id: form.value.id }), form.value, {
         preserveScroll: true,
         preserveState: false,
         onSuccess: () => {
