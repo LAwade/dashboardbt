@@ -119,7 +119,7 @@ const form = ref({
     round: '',
     team_one: null,
     team_two: null,
-    championship_id: props.teams[0].championship_id ? props.teams[0].championship_id : null
+    championship_id: props.teams?.[0]?.championship_id ?? null
 });
 
 watch(
