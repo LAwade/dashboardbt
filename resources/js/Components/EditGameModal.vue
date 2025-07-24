@@ -103,8 +103,7 @@ const props = defineProps({
     game: Object,
     teams: Object,
     courts: Array,
-    status: Array,
-    championship_id: Number
+    status: Array
 });
 
 const emit = defineEmits(['saved', 'close']);
@@ -120,7 +119,7 @@ const form = ref({
     round: '',
     team_one: null,
     team_two: null,
-    championship_id: null
+    championship_id: props.teams[0].championship_id ? props.teams[0].championship_id : null
 });
 
 watch(

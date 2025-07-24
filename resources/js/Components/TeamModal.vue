@@ -3,7 +3,7 @@
         <div class="bg-white p-6 rounded shadow w-full max-w-lg relative">
             <h2 class="text-lg font-semibold mb-4 text-black">Criar Team/Editar Team</h2>
 
-            <form @submit.prevent="saveTeam" class="p-4 md:p-5">
+            <form @submit.prevent="save()" class="p-4 md:p-5">
                 <div class="mb-4">
                     <label class="block text-sm text-gray-700 mb-1">Nome do jogador 1</label>
                     <input type="text" v-model="form.player_one"
@@ -43,7 +43,7 @@ const form = ref({
     id: null,
     player_one: '',
     player_two: '',
-    championship_id: null,
+    championship_id: championship.value.id,
 });
 
 watch(
@@ -66,10 +66,29 @@ const close = () => emit('close');
 const saveTeam = () => {
     router.post(route('team.store'), form.value, {
         preserveScroll: true,
-        preserveState: true,
+        preserveState: false,
         onSuccess: () => {
             close();
         }
     });
 };
+
+const updatedTeam = () => {
+    router.put(route('team.update'), form.value, {
+        preserveScroll: true,
+        preserveState: false,
+        onSuccess: () => {
+            close();
+        }
+    });
+};
+
+const save = () => {
+    if(form.value.id){
+        updatedTeam();
+    } else {
+        saveTeam()
+    }
+}
+
 </script>

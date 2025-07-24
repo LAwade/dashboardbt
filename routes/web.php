@@ -42,6 +42,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/team/{championshipId}', [TeamController::class, 'index'])->name('team.index');
     Route::post('/team/{name}/{championshipId}', [TeamController::class, 'findTeamByNameAndChampionship'])->name('team.find');
     Route::post('/team', [TeamController::class, 'store'])->name('team.store');
+    Route::put('/team/{id}', [TeamController::class, 'update'])->name('team.update');
     Route::delete('/team/{id}', [TeamController::class, 'destroy'])->name('team.destroy');
 
     /** GERENCIAR CAMPEONATOS */

@@ -78,6 +78,7 @@ watch([search, pagination], findTeams);
 
     <Head title="Campeonatos" />
     <AuthenticatedLayout>
+        <TeamModal :open="editing" :championship="championship" @close="editing = false" :team="selected" :key="selected ? selected.id : 'new'" />
         <div class="py-12">
             <!-- Table Section -->
             <div class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
@@ -112,9 +113,8 @@ watch([search, pagination], findTeams);
                                                     </form>
                                                 </div>
                                             </div>
-                                            <TeamModal :open="editing" :championship="championship"
-                                                @close="editing = false" />
-                                            <button type="button" @click="editModal"
+                                            
+                                            <button type="button" @click="editModal(null)"
                                                 class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-green-600 text-white hover:bg-green-700 focus:outline-hidden focus:bg-green-700 disabled:opacity-50 disabled:pointer-events-none">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                     viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -199,8 +199,7 @@ watch([search, pagination], findTeams);
 
                                             <td class="size-px whitespace-nowrap">
                                                 <div class="px-4 gap-x-6 py-2 flex justify-end">
-                                                    <TeamModal :open="editing" :championship="championship"
-                                                        @close="editing = false" :team="selected" :key="team.id" />
+                                                    
                                                     <button type="button" @click="editModal(team)"
                                                         class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg bg-blue-500 text-white shadow-2xs hover:bg-blue-400 focus:outline-hidden focus:bg-blue-400 disabled:opacity-50 disabled:pointer-events-none">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"

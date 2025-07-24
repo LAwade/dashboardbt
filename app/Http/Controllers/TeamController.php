@@ -35,48 +35,22 @@ class TeamController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
+        //dd($request->all());
         $data = $request->validate([
-            'id' => 'nullable|exists:teams,id',
             'player_one' => 'required|string|max:255',
             'player_two' => 'required|string|max:255',
             'championship_id' => 'required|exists:championships,id',
         ]);
 
-        if (isset($data['id'])) {
-            $this->teamService->update($data['id'], $data);
-        } else {
-            $this->teamService->create($data);
-        }
+
+
+        $this->teamService->create($data);
 
         return Inertia::location(route('team.index', ['championshipId' => $data['championship_id'], 'page' => 1]));
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
     }
 
     /**
@@ -84,7 +58,15 @@ class TeamController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $data = $request->validate([
+            'player_one' => 'required|string|max:255',
+            'player_two' => 'required|string|max:255',
+            'championship_id' => 'required|exists:championships,id',
+        ]);
+
+        $this->teamService->update($id, $data);
+
+        return Inertia::location(route('team.index', ['championshipId' => $data['championship_id'], 'page' => 1]));
     }
 
     /**
