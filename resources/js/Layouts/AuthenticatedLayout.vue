@@ -5,10 +5,12 @@ import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
-import { Link } from '@inertiajs/vue3';
+import { usePage, Link } from '@inertiajs/vue3';
 import Notification from '@/Components/Notification.vue';
 
 const showingNavigationDropdown = ref(false);
+const userPermission = usePage().props.auth.permission
+const user = usePage().props.user
 
 </script>
 
@@ -33,18 +35,19 @@ const showingNavigationDropdown = ref(false);
                                     Painel Geral
                                 </NavLink>
 
-                                <NavLink :href="route('championships.index')" :active="route().current('championships.index')">
+                                <NavLink v-if="userPermission == 1" :href="route('championships.index')"
+                                    :active="route().current('championships.index')">
                                     Campeonatos
                                 </NavLink>
 
-                                <NavLink :href="route('courts.index')" :active="route().current('courts.index')">
+                                <NavLink v-if="userPermission == 1" :href="route('courts.index')" :active="route().current('courts.index')">
                                     Quadras
                                 </NavLink>
 
-                                <NavLink :href="route('users.index')" :active="route().current('users.index')">
+                                <NavLink v-if="userPermission == 1" :href="route('users.index')" :active="route().current('users.index')">
                                     Usuários
                                 </NavLink>
-                                
+
                                 <!-- 
                                 <NavLink :href="route('panel')" :active="route().current('panel')">
                                     Painel
@@ -61,7 +64,7 @@ const showingNavigationDropdown = ref(false);
                                         <span class="inline-flex rounded-md">
                                             <button type="button"
                                                 class="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none">
-                                                {{ $page.props.auth?.user?.name }}
+                                                {{ user?.name }}
 
                                                 <svg class="-me-0.5 ms-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg"
                                                     viewBox="0 0 20 20" fill="currentColor">
@@ -126,10 +129,10 @@ const showingNavigationDropdown = ref(false);
                     <div class="border-t border-gray-200 pb-1 pt-4">
                         <div class="px-4">
                             <div class="text-base font-medium text-gray-800">
-                                {{ $page.props.auth?.user?.name }}
+                                {{ user?.name }}
                             </div>
                             <div class="text-sm font-medium text-gray-500">
-                                {{ $page.props.auth?.user?.email }}
+                                {{ user?.email }}
                             </div>
                         </div>
 

@@ -4,7 +4,6 @@ namespace App\Providers;
 
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\URL;
 use Inertia\Inertia;
 
 class AppServiceProvider extends ServiceProvider
@@ -32,5 +31,8 @@ class AppServiceProvider extends ServiceProvider
                 ];
             },
         ]);
+
+        Inertia::share('user', fn () => auth()->user());
+        Inertia::share('auth.permission', fn () => auth()->user()?->permission->id);
     }
 }

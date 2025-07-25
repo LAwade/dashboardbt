@@ -10,6 +10,7 @@ const courts = ref(page.props.courts);
 const modal = ref(false)
 const dataSelected = ref(null)
 const search = ref('');
+const userPermission = usePage().props.auth.permission
 
 function formatSchedule(value) {
     if (!value) return '-';

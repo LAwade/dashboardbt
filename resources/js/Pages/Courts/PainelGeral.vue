@@ -9,7 +9,6 @@ import GameStatus from '@/Components/GameStatus.vue';
 import DropdownMenu from '@/Components/DropdownMenu.vue';
 
 const page = usePage();
-
 const games = ref([]);
 const infos = ref({});
 const isLoading = ref(true);
@@ -180,14 +179,14 @@ onMounted(async () => {
                     </div>
 
                     <div v-if="game.status_id === 2">
-                      <EditResultGameModal :key="game.id" :open="editingResult" :game="game"
+                      <EditResultGameModal v-if="userPermission == 1 || userPermission == 2" :key="game.id" :open="editingResult" :game="game"
                         @close="editingResult = false" />
                       <button type="button" @click="editResult(game)"
                         class="mx-1 px-5 py-2 text-sm font-medium text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 rounded-lg text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">Finalizar</button>
                     </div>
 
                     <div>
-                      <DropdownMenu :key="game.id" :game="game" :status="infos.status" :courts="infos.courts"
+                      <DropdownMenu v-if="userPermission == 1 || userPermission == 2" :key="game.id" :game="game" :status="infos.status" :courts="infos.courts"
                         @edit="editGame" @result="resultGame" />
                     </div>
                   </div>
