@@ -41,7 +41,6 @@ RUN composer install
 
 RUN php artisan storage:link
 RUN php artisan key:generate
-
 RUN php artisan config:cache
 
 RUN npm run build

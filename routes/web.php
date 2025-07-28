@@ -42,8 +42,6 @@ Route::middleware(['auth', 'verified', CheckPermission::class . ':1'])->group(fu
 
 /** ROTAS JUIZ GERAL **/
 Route::middleware(['auth', 'verified', CheckPermission::class . ':1,2'])->group(function () {
-
-
     Route::get('/games/championship/{id}', [GameController::class, 'index'])->name('games.index');
 
     /** GERENCIAR JOGADORES */

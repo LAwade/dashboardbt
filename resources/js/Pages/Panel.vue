@@ -82,7 +82,7 @@ watch(() => {
                 <form @submit.prevent="findPlayer">
                     <div class="relative">
                         <input type="text" v-model="form.name" required minlength="3" maxlength="30"
-                            class="p-3 sm:p-4 block w-full border-gray-400 rounded-full sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+                            class="shadow-md p-3 sm:p-4 block w-full border-gray-400 rounded-full sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
                             placeholder="Informe o nome do jogador">
 
                         <div class="absolute top-1/2 end-2 -translate-y-1/2">
@@ -129,7 +129,7 @@ watch(() => {
                     <div
                         class="grid sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-2 gap-3 sm:gap-6 gap-x-6 sm:gap-x-12 lg:gap-x-24">
                         <div v-for="player in players"
-                            class="flex flex-col bg-white border border-gray-400 shadow-2xs rounded-xl">
+                            class="flex flex-col bg-white border border-gray-300 shadow-lg rounded-xl">
                             <div class="p-4 md:p-5 flex justify-between gap-x-3">
                                 <div>
                                     <p class="text-xs uppercase text-gray-500">
@@ -144,7 +144,7 @@ watch(() => {
                             </div>
 
                             <button
-                                class="py-3 px-4 md:px-5 inline-flex justify-between items-center text-sm text-gray-600 border-gray-400 hover:bg-gray-50 focus:outline-hidden focus:bg-gray-50 rounded-b-xl"
+                                class="py-3 px-4 md:px-5 inline-flex justify-between items-center text-sm text-gray-600 border-t border-gray-200 hover:bg-gray-50 focus:outline-hidden focus:bg-gray-50 rounded-b-xl"
                                 @click="router.visit(route('panel.player', { id: player.id }))">
                                 Ver jogos
                                 <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -162,10 +162,10 @@ watch(() => {
             <!-- End Card Section -->
 
             <!-- Card Section -->
-            <div v-if="!players.length" class="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
-                <div class="flex justify-center gap-x-6 sm:gap-x-12 lg:gap-x-24">
+            <div v-if="!players.length" class="max-w-[85rem] px-4 py-10 lg:py-14 mx-auto">
+                <div class="flex justify-center gap-x-6 sm:gap-x-12 lg:gap-x-6">
                     <div v-for="championship in championships"
-                        class="flex flex-col bg-white border border-gray-200 shadow-2xs rounded-xl">
+                        class="flex flex-col bg-white border border-gray-200 shadow-lg rounded-xl">
                         <div class="p-4 md:p-5 flex justify-between gap-x-3">
                             <div>
                                 <p class="text-xs uppercase text-gray-800">
@@ -194,8 +194,6 @@ watch(() => {
                             </svg>
                         </a>
                     </div>
-                    <!-- End Card -->
-
                 </div>
                 <!-- End Grid -->
             </div>

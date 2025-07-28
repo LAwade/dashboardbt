@@ -20,12 +20,16 @@ class CourtService
                     'c.name',
                     'c.number',
                     'c.enable',
-                    DB::raw('COUNT(g.id) as total_games'),
-                    DB::raw("COUNT(g.id) FILTER (WHERE g.status_id = 1) as pending"),
-                    DB::raw("COUNT(g.id) FILTER (WHERE g.status_id = 2) as in_progress"),
-                    DB::raw("COUNT(g.id) FILTER (WHERE g.status_id = 5) as finished")
+                    DB::raw('COUNT(g.id) FILTER (WHERE c2.status_id = 2) AS total_games'),
+                    DB::raw("COUNT(g.id) FILTER (WHERE g.status_id = 1 AND c2.status_id = 2) AS pending"),
+                    DB::raw("COUNT(g.id) FILTER (WHERE g.status_id = 2 AND c2.status_id = 2) AS in_progress"),
+                    DB::raw("COUNT(g.id) FILTER (WHERE g.status_id = 5 AND c2.status_id = 2) AS finished")
                 )
                 ->leftJoin('games as g', 'c.id', '=', 'g.court_id')
+                ->leftJoin('championships as c2', function ($join) {
+                    $join->on('g.championship_id', '=', 'c2.id')
+                        ->where('c2.status_id', '=', 2); // << Aqui é o "AND" no LEFT JOIN
+                })
                 ->groupBy('c.id', 'c.name', 'c.number', 'c.enable')
                 ->orderBy('c.number')
                 ->get();
@@ -37,7 +41,7 @@ class CourtService
                 'sql' => $e->getSql(),
                 'bindings' => $e->getBindings()
             ]);
-        } 
+        }
         return collect();
     }
 
@@ -82,14 +86,15 @@ class CourtService
                 'sql' => $e->getSql(),
                 'bindings' => $e->getBindings()
             ]);
-        } 
+        }
         return collect();
     }
 
-    public function findCourtByGameId(string $id){
+    public function findCourtByGameId(string $id)
+    {
         try {
             $game = Game::find($id);
-            if(!$game){
+            if (!$game) {
                 return collect();
             }
             return Court::find($game->court_id);
@@ -98,7 +103,7 @@ class CourtService
                 'exception' => $e->getMessage(),
                 'sql' => $e->getSql(),
                 'bindings' => $e->getBindings()
-          
+
             ]);
         }
         return collect();

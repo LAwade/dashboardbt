@@ -30,8 +30,9 @@ class GameService
     public function findWithTeamByCourt(string $id)
     {
         try {
-            $games = Game::with(['teamOne', 'teamTwo', 'status', 'setResults'])
+            $games = Game::with(['teamOne', 'teamTwo', 'status', 'championship', 'setResults'])
                 ->where('court_id', $id)
+                //->where('championships.status_id', 2)
                 ->orderBy('schedule', 'asc')
                 ->get();
 
@@ -93,6 +94,7 @@ class GameService
         try {
             $query = Game::with(['teamOne', 'teamTwo', 'status', 'championship', 'court', 'setResults'])
                 ->where("championship_id", $championship_id);
+                //->where('championships.status_id', 2);
 
             if ($schedule) {
                 $query->whereDate("schedule", $schedule);

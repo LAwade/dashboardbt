@@ -37,14 +37,61 @@ function formatSchedule(value) {
 
     <Head title="Jogos" />
     <!-- Card Section -->
-    <div class="max-w-[85rem] px-4 py-6 sm:px-6 lg:px-12 lg:py-6 mx-auto">
+
+    <div class="block md:hidden max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
         <!-- Grid -->
-        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6"></div>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            <!-- Card -->
+            <div v-for="game in games"
+                class="flex flex-col gap-y-3 lg:gap-y-5 p-4 md:p-5 bg-white border border-gray-200 shadow-2xs rounded-xl">
+                <div class="inline-flex justify-center items-center">
+                    <GameStatus :key="game.updated_at" :status="game.status_id" />
+                </div>
+                <div class="inline-flex justify-center items-center">
+                    <span class="text-sm font-semibold uppercase text-gray-600">
+                        {{ game.team_one.player_one }}/{{ game.team_one.player_two }}
+                    </span>
+                </div>
+
+                <div class="inline-flex justify-center items-center">
+                    <h3 class="text-xl sm:text-4xl lg:text-5xl font-semibold text-gray-600">
+                        {{ getSetPlacar(game, 0).teamOne }} X {{ getSetPlacar(game, 0).teamTwo }}
+                        <div v-if="game.set_results?.[1]">| {{ getSetPlacar(game, 1).teamOne }} X {{ getSetPlacar(game,
+                            1).teamTwo }} </div>
+                        <div v-if="game.set_results?.[2]">| {{ getSetPlacar(game, 2).teamOne }} X {{ getSetPlacar(game,
+                            2).teamTwo }} </div>
+                    </h3>
+                </div>
+
+                <div class="inline-flex justify-center items-center">
+                    <span class="text-sm font-semibold uppercase text-gray-600">
+                        {{ game.team_two.player_one }}/{{ game.team_two.player_two }}
+                    </span>
+                </div>
+
+                <dl class="flex justify-center items-center divide-x divide-gray-200">
+                    <dt class="pe-3">
+                        <span class="font-semibold text-neutral-600 inline-block text-sm">
+                            {{ game.round }}
+                        </span>
+                        <span class="block text-sm text-gray-600">{{ game.category }}</span>
+                    </dt>
+                    <dd class="text-start ps-3">
+                        <span class="text-sm font-semibold text-gray-600">
+                            {{ game.court.name }}
+                        </span>
+                        <span class="block text-sm text-gray-600">
+                            {{ formatSchedule(game.schedule) }}
+                        </span>
+                    </dd>
+                </dl>
+            </div>
+            <!-- End Card -->
+        </div>
     </div>
-    <!-- End Card Section -->
 
     <!-- Table Section -->
-    <div class="max-w-[85rem] px-4  sm:px-6 lg:px-8 mx-auto">
+    <div class="hidden md:block max-w-[85rem] px-4 py-8 sm:px-6 lg:px-8 mx-auto">
         <!-- Card -->
         <div class="flex flex-col">
             <div class="-m-1.5 overflow-x-auto">

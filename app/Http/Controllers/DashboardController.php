@@ -37,7 +37,5 @@ class DashboardController extends Controller
         $gamesWaiting = $this->gameService->findGamesByStatus($championship_id, 1);
         $gamesJoin = $this->gameService->findGamesByStatus($championship_id, 2);
         return Inertia::render('Games', ["games" => $games, "finished" => $gamesFinished, "waiting" => $gamesWaiting, "join" => $gamesJoin]);
-    }
-
-    
+    }    
 }

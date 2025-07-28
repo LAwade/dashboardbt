@@ -58,7 +58,7 @@ class ChampionshipService
     public function findChampionshipAndGames()
     {
         try {
-            $championships = Championship::withCount('games')->get();
+            $championships = Championship::withCount('games')->where('status_id', 2)->get();
             return $championships;
         } catch (QueryException $e) {
             Log::channel('database_errors')->error(__FUNCTION__ . ' - Erro ao buscar games por campeonato no banco de dados', [
