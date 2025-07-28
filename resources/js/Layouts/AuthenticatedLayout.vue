@@ -40,11 +40,13 @@ const user = usePage().props.user
                                     Campeonatos
                                 </NavLink>
 
-                                <NavLink v-if="userPermission == 1" :href="route('courts.index')" :active="route().current('courts.index')">
+                                <NavLink v-if="userPermission == 1" :href="route('courts.index')"
+                                    :active="route().current('courts.index')">
                                     Quadras
                                 </NavLink>
 
-                                <NavLink v-if="userPermission == 1" :href="route('users.index')" :active="route().current('users.index')">
+                                <NavLink v-if="userPermission == 1" :href="route('users.index')"
+                                    :active="route().current('users.index')">
                                     Usuários
                                 </NavLink>
 
@@ -122,6 +124,21 @@ const user = usePage().props.user
                     <div class="space-y-1 pb-3 pt-2">
                         <ResponsiveNavLink :href="route('dashboard')" :active="route().current('dashboard')">
                             Dashboard
+                        </ResponsiveNavLink>
+
+                        <ResponsiveNavLink v-if="userPermission == 1" :href="route('championships.index')"
+                            :active="route().current('championships.index')">
+                            Campeonatos
+                        </ResponsiveNavLink>
+
+                        <ResponsiveNavLink v-if="userPermission == 1" :href="route('courts.index')"
+                            :active="route().current('courts.index')">
+                            Quadras
+                        </ResponsiveNavLink>
+
+                        <ResponsiveNavLink v-if="userPermission == 1" :href="route('users.index')"
+                            :active="route().current('users.index')">
+                            Usuários
                         </ResponsiveNavLink>
                     </div>
 
