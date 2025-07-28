@@ -12,7 +12,7 @@ const page = usePage();
 const games = ref([]);
 const infos = ref({});
 const isLoading = ref(true);
-
+const userPermission = usePage().props.auth.permission
 
 /** RESULTADO */
 const editingResult = ref(false);

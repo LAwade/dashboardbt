@@ -45,7 +45,7 @@ RUN php artisan config:cache
 
 RUN npm run build
 
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+RUN cp supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 EXPOSE 8181 5173 6001
 
