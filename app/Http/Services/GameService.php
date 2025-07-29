@@ -32,7 +32,9 @@ class GameService
         try {
             $games = Game::with(['teamOne', 'teamTwo', 'status', 'championship', 'setResults'])
                 ->where('court_id', $id)
-                //->where('championships.status_id', 2)
+                ->whereHas('championship', function ($query) {
+                    $query->where('status_id', 2);
+                })
                 ->orderBy('schedule', 'asc')
                 ->get();
 
@@ -43,7 +45,7 @@ class GameService
                 'sql' => $e->getSql(),
                 'bindings' => $e->getBindings()
             ]);
-        } 
+        }
         return collect();
     }
 
@@ -94,7 +96,7 @@ class GameService
         try {
             $query = Game::with(['teamOne', 'teamTwo', 'status', 'championship', 'court', 'setResults'])
                 ->where("championship_id", $championship_id);
-                //->where('championships.status_id', 2);
+            //->where('championships.status_id', 2);
 
             if ($schedule) {
                 $query->whereDate("schedule", $schedule);
@@ -217,6 +219,6 @@ class GameService
                 'bindings' => $e->getBindings()
             ]);
         }
-       return collect();
+        return collect();
     }
 }

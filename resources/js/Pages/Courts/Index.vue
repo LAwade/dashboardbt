@@ -88,15 +88,13 @@ watch([search], findCourt);
                 <!-- Grid -->
                 <div class="grid sm:grid-cols-4 lg:grid-cols-4 gap-6">
                     <!-- Card -->
-                    <div v-for="court in courts"
-                        class="group flex flex-col h-full bg-white border border-gray-200 shadow-2xs rounded-xl">
+                    <div v-for="court in courts" class="group flex flex-col h-full bg-white border border-gray-200 shadow-2xs rounded-xl">
                         <div class="p-4 md:p-6">
                             <h3 class="text-xl font-semibold text-blue-600">
                                 {{ court.name }} [{{ court.number }}]
                             </h3>
 
                             <p class="mt-3 text-gray-500 dark:text-neutral-500">
-
                             </p>
                             <div v-if="court.enable">
                                 <span

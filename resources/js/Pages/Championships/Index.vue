@@ -105,7 +105,7 @@ watch([search], findChampionship);
                         </div>
                         <div class="mt-auto flex border-t border-gray-300 divide-x divide-gray-300">
                             <button
-                                class="w-full py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-es-xl bg-white text-blue-500 shadow-2xs hover:bg-gray-50 focus:outline-hidden focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:border-neutral-500 dark:hover:bg-neutral-200"
+                                class="w-full py-3 px-2 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-es-xl bg-white text-blue-500 shadow-2xs hover:bg-gray-50 focus:outline-hidden focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:border-neutral-500 dark:hover:bg-neutral-200"
                                 @click="router.visit(route('team.index', { championshipId: championship.id }))">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
                                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -118,7 +118,7 @@ watch([search], findChampionship);
                                 Equipes
                             </button>
                             <button
-                                class="w-full py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-medium bg-white text-blue-500 shadow-2xs hover:bg-gray-50 focus:outline-hidden focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:border-neutral-500 dark:hover:bg-neutral-200 dark:focus:bg-neutral-200"
+                                class="w-full py-3 px-2 inline-flex justify-center items-center gap-x-2 text-sm font-medium bg-white text-blue-500 shadow-2xs hover:bg-gray-50 focus:outline-hidden focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:border-neutral-500 dark:hover:bg-neutral-200 dark:focus:bg-neutral-200"
                                 @click="router.visit(route('games.index', { id: championship.id }))">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
                                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -134,7 +134,7 @@ watch([search], findChampionship);
                             </button>
 
                             <button
-                                class="w-full py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-medium bg-white text-blue-500 shadow-2xs hover:bg-gray-50 focus:outline-hidden focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:border-neutral-500 dark:hover:bg-neutral-200 dark:focus:bg-neutral-200"
+                                class="w-full py-3 px-2 inline-flex justify-center items-center gap-x-2 text-sm font-medium bg-white text-blue-500 shadow-2xs hover:bg-gray-50 focus:outline-hidden focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:border-neutral-500 dark:hover:bg-neutral-200 dark:focus:bg-neutral-200"
                                 @click="openModal(championship)">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
                                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -146,7 +146,7 @@ watch([search], findChampionship);
                                 Editar
                             </button>
                             <button
-                                class="w-full py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-ee-xl bg-white text-red-500 shadow-2xs hover:bg-gray-50 focus:outline-hidden focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:border-neutral-500 dark:hover:bg-neutral-200"
+                                class="w-full py-3 px-2 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-ee-xl bg-white text-red-500 shadow-2xs hover:bg-gray-50 focus:outline-hidden focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:border-neutral-500 dark:hover:bg-neutral-200"
                                 @click="deleteChampionship(championship.id)">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
                                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"

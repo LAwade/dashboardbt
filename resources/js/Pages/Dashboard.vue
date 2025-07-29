@@ -15,27 +15,28 @@ const courts = ref(page.props.courts);
 
   <AuthenticatedLayout>
     <div class="py-12">
-      <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+      <div class="max-w-[85rem] px-4 sm:px-6 lg:px-8 mx-auto">
         <div class="space-y-4">
           <div class="text-xl font-semibold text-gray-700">Quadras</div>
           <!-- Grid Container -->
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             <!-- Card de Painel -->
-            <div v-for="court in courts" :key="court.id"
-              class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+            <div v-for="court in courts" :key="court.id" class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
               <div class="p-5">
                 <h3 class="text-xl font-bold text-gray-800">{{ court.name }}</h3>
-                <span class="text-xs text-gray-500">Jogos</span>
+                
                 <div class="flex space-x-6 mt-4">
-                  <div>
+                  <div class="text-center">
                     <span class="block text-2xl font-bold text-gray-800"> {{ court.total_games }}</span>
-                    <span class="text-xs text-gray-500">Jogos</span>
+                    <span class="text-xs text-gray-500">Jogo(s)</span>
                   </div>
-                  <div>
+
+                  <div class="text-center">
                     <span class="block text-2xl font-bold text-gray-800">{{ court.pending }}</span>
                     <span class="text-xs text-gray-500">Pendentes</span>
                   </div>
-                  <div>
+
+                  <div class="text-center">
                     <span class="block text-2xl font-bold text-gray-800">{{ court.finished }}</span>
                     <span class="text-xs text-gray-500">Finalizados</span>
                   </div>
