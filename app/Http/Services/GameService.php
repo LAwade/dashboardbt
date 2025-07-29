@@ -54,6 +54,9 @@ class GameService
         try {
             $game =  Game::with(['teamOne', 'teamTwo', 'status', 'championship', 'setResults'])
                 ->where('court_id', $id)
+                ->whereHas('championship', function ($query) {
+                    $query->where('status_id', 2);
+                })
                 ->whereIn('status_id', [2, 1, 5])
                 ->orderByRaw("
                 CASE

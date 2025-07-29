@@ -113,13 +113,14 @@ onMounted(async () => {
         <div v-else-if="!isLoading && infos && games" class="mx-auto max-w-7xl sm:px-6 lg:px-8">
           <div class="space-y-4">
             <div class="text-4xl font-semibold text-gray-700">{{ infos.court.name }}</div>
+
             <div
-              class="w-full p-4 text-center bg-white border border-gray-200 rounded-lg shadow-sm sm:p-8 dark:bg-white-800 dark:border-gray-200">
+              class="hidden md:block w-full p-4 text-center bg-white border border-gray-200 rounded-lg shadow-sm sm:p-8 dark:bg-white-800 dark:border-gray-200">
               <p class="text-base text-gray-500 sm:text-lg dark:text-gray-500">{{ infos.first_game.championship.name }}
               </p>
               <h5 class="mb-2 text-3xl font-bold text-gray-900 dark:text-gray-800">{{
                 infos.first_game.team_one.player_one
-                }} /
+              }} /
                 {{ infos.first_game.team_one.player_two }} &nbsp;
                 {{ getSetPlacar(infos.first_game, 0).teamOne }} X {{ getSetPlacar(infos.first_game, 0).teamTwo }}
 
@@ -136,6 +137,35 @@ onMounted(async () => {
 
                 &nbsp; {{ infos.first_game.team_two.player_one }} / {{ infos.first_game.team_two.player_two }}
               </h5>
+              <p class="text-base text-gray-500 sm:text-lg dark:text-gray-500">Jogo: {{ infos.first_game.id }} - {{
+                infos.first_game.category }} - {{ formatSchedule(infos.first_game.schedule) }}</p>
+            </div>
+
+            <div
+              class="block md:hidden w-full p-4 text-center bg-white border border-gray-200 rounded-lg shadow-sm sm:p-8 dark:bg-white-800 dark:border-gray-200">
+              <p class="text-base text-gray-500 sm:text-lg dark:text-gray-500">{{ infos.first_game.championship.name }}
+              </p>
+              <h5 class="mb-2 text-xl font-bold text-gray-900 dark:text-gray-800">
+                {{ infos.first_game.team_one.player_one }} / {{ infos.first_game.team_one.player_two }}
+              </h5>
+
+              <h5 class="mb-2 text-lg text-gray-900 dark:text-gray-800">
+                {{ getSetPlacar(infos.first_game, 0).teamOne }} X {{ getSetPlacar(infos.first_game, 0).teamTwo }}
+                <template v-if="infos.first_game.set_results?.[1]">
+                  | {{ getSetPlacar(infos.first_game, 1).teamOne }} X {{ getSetPlacar(infos.first_game, 1).teamTwo }}
+                </template>
+                <!-- Tie-break (condicional e com label) -->
+                <template v-if="infos.first_game.set_results?.[2]">
+                  | {{ getSetPlacar(infos.first_game, 2).teamOne }} X {{ getSetPlacar(infos.first_game, 2).teamTwo }}
+                  <span v-if="infos.first_game.set_results[2].tie_break" class="text-xs text-yellow-500">
+                    (tie-break)</span>
+                </template>
+              </h5>
+
+              <h5 class="mb-2 text-xl font-bold text-gray-900 dark:text-gray-800">
+                {{ infos.first_game.team_two.player_one }} / {{ infos.first_game.team_two.player_two }}
+              </h5>
+
               <p class="text-base text-gray-500 sm:text-lg dark:text-gray-500">Jogo: {{ infos.first_game.id }} - {{
                 infos.first_game.category }} - {{ formatSchedule(infos.first_game.schedule) }}</p>
             </div>
