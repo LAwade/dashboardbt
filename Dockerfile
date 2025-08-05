@@ -18,6 +18,7 @@ RUN apt-get update -y \
     && docker-php-ext-install pdo pdo_pgsql mbstring pcntl \
     && rm -rf /var/lib/apt/lists/* 
 
+
 WORKDIR /app
 
 RUN curl -s https://getcomposer.org/installer | php
@@ -41,7 +42,6 @@ RUN composer install
 
 RUN php artisan storage:link
 RUN php artisan key:generate
-RUN php artisan config:cache
 
 RUN npm run build
 
