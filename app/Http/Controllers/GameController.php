@@ -104,7 +104,8 @@ class GameController extends Controller
             $this->gameService->update($id, $data);
 
             $game = $this->gameService->findById($id);
-
+            broadcast(new StatusUpdated($game));
+            
             broadcast(new UpdatedEvent);
             return Inertia::location(url()->previous());
         } catch (\Exception $e) {
@@ -154,6 +155,8 @@ class GameController extends Controller
 
             $game = $this->gameService->findById($id);
             broadcast(new StatusUpdated($game));
+
+            broadcast(new UpdatedEvent);
             return redirect()->back()->with('success', $message);
         } catch (\Exception $e) {
             Log::channel('exception')->error('Erro ao atualizar o status do jogo', [

@@ -7,6 +7,9 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 
 class UpdatedEvent implements ShouldBroadcastNow
 {
+    /**
+     * BROADCAST PARA ATUALIZAÇÃO DAS TELAS DE JOGOS DOS PAINEIS
+     */
     public function broadcastOn()
     {
         return [new Channel('games')];

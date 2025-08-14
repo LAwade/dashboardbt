@@ -10,6 +10,11 @@ use Illuminate\Support\Facades\Log;
 
 class StatusUpdated implements ShouldBroadcastNow
 {
+    /**
+     * BROADCAST PARA ATUALIZAÇÃO DA TELA DE JUIZES
+     *  --> IMPORTANTE PARA QUE ARBITROS NÃO INICIE JOGOS OU ALTERE, NO QUAL, JÁ FORAM 
+     * ATUALIZADO POR OUTROS JUIZ.
+     */
     public $game;
 
     public function __construct($game)

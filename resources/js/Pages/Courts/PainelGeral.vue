@@ -82,7 +82,7 @@ onMounted(async () => {
   }
 
   window.Echo.channel('games')
-    .listen('.updated.event', async (event) => {
+    .listen('.status.updated', async (event) => {
       const updatedGame = await findCourts()
       const index = games.value.findIndex(g => g.id === updatedGame.id);
       if (index !== -1) {
@@ -179,7 +179,7 @@ onMounted(async () => {
                 <blockquote class="mx-auto text-gray-500 dark:text-gray-400">
                   <p class="my-4 text-gray-500">JOGO: {{ game.id }} | {{ formatSchedule(game.schedule) }} | {{
                     game.category }}</p>
-                  <GameStatus :key="game.id" :status="game.status_id" />
+                  <GameStatus :key="game.updated_at" :status="game.status_id" />
 
                   <h3 class="text-2xl p-2 font-semibold text-gray-900 dark:text-gray-600">
                     <i>{{ game.team_one.player_one }}</i> / <i>{{ game.team_one.player_two }}</i>
